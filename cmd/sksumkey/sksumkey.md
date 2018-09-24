@@ -2,11 +2,11 @@
 
 ## 【名前】
 
-sumkey : プライマリキー単位で値を集計
+sksumkey : プライマリキー単位で値を集計
 
 ## 【書式】
 
-    sumkey -if <infield1>,<infield2> -of <outfield1> [+count] <pk1>,<pk2> <sum1>,<sum2> <file>
+    sksumkey -if <infield1>,<infield2> -of <outfield1> [+count] <pk1>,<pk2> <sum1>,<sum2> <file>
 
 ## 【説明】
 
