@@ -22,11 +22,11 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 		columnarray = strings.Split(column, ",")
 		l := len(columnarray)
 		if l == 1 {
-			incolumnname = append(incolumnname, columnarray[1])
-			outcolumnname = append(outcolumnname, columnarray[1])
+			incolumnname = append(incolumnname, columnarray[0])
+			outcolumnname = append(outcolumnname, columnarray[0])
 		} else if l == 2 {
-			incolumnname = append(incolumnname, columnarray[1])
-			outcolumnname = append(outcolumnname, columnarray[2])
+			incolumnname = append(incolumnname, columnarray[0])
+			outcolumnname = append(outcolumnname, columnarray[1])
 		} else {
 			err = fmt.Errorf("Input/Output Column Name Format Error: %s", column)
 		}
