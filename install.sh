@@ -17,7 +17,7 @@ cd ${CWD}
 
 #echo "${CMDDIRS}"
 
-${GOCMD} test "${CMDSRCROOT}/skcmnlib/skcmnlib_test.go"
+${GOCMD} test -v "${CMDSRCROOT}/skcmnlib/skcmnlib_test.go"
 
 for CMDDIR in ${CMDDIRS}; do
   ${GOCMD} build "${CMDSRCROOT}/${CMDDIR}/${CMDDIR}.go"

@@ -59,3 +59,71 @@ func TestCammaDivide(t *testing.T) {
 		}
 	}
 }
+
+func TestConnectFields(t *testing.T) {
+
+	instrArr1 := make([]string, 0, 5)
+	spc1 := " "
+	ans1 := skcmnlib.ConnectFields(instrArr1, spc1)
+	if len(instrArr1) == 0 {
+		t.Log("instrArr1 size is 0")
+	} else {
+		for i, instr := range instrArr1 {
+			t.Logf("[OK]:skcmnlib.ConnectFields:入力1 instrArr1[%d]=%s\n", i, instr)
+		}
+	}
+	t.Logf("[OK]:skcmnlib.ConnectFields:入力1 spc1=%v\n", spc1)
+
+	if ans1 != "" {
+		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値1: %s\n", ans1)
+	} else {
+		t.Logf("[OK]:skcmnlib.ConnectFields:戻値1: %s\n", ans1)
+	}
+
+	var instrArr2 []string
+	var spc2 string
+	ans2 := skcmnlib.ConnectFields(instrArr2, spc2)
+	for i, instr := range instrArr2 {
+		t.Logf("[OK]:skcmnlib.ConnectFields:入力2 instArr[%d]=%s\n", i, instr)
+	}
+	t.Logf("[OK]:skcmnlib.ConnectFields:入力2 spc1=%v\n", spc2)
+
+	if ans1 != "" {
+		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値2: %s\n", ans2)
+	} else {
+		t.Logf("[OK]:skcmnlib.ConnectFields:戻値2: %s\n", ans2)
+	}
+
+	instrArr3 := make([]string, 0, 5)
+	spc3 := " "
+	instrArr3 = append(instrArr3, "てすてすと")
+
+	ans3 := skcmnlib.ConnectFields(instrArr3, spc3)
+	if ans3 != "てすてすと" {
+		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値3: %s\n", ans3)
+	}
+	t.Logf("[OK]:skcmnlib.ConnectFields:戻値3: %s\n", ans3)
+
+	instrArr4 := make([]string, 0, 5)
+	spc4 := " "
+	instrArr4 = append(instrArr4, "てすてすと1")
+	instrArr4 = append(instrArr4, "てすてすと2")
+
+	ans4 := skcmnlib.ConnectFields(instrArr4, spc4)
+	if ans4 != "てすてすと1 てすてすと2" {
+		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値4: %s\n", ans4)
+	}
+	t.Logf("[OK]:skcmnlib.ConnectFields:戻値4: %s\n", ans4)
+
+	instrArr5 := make([]string, 0, 5)
+	spc5 := ","
+	instrArr5 = append(instrArr5, "てすてすと1")
+	instrArr5 = append(instrArr5, "てすてすと2")
+
+	ans5 := skcmnlib.ConnectFields(instrArr5, spc5)
+	if ans5 != "てすてすと1,てすてすと2" {
+		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値5: %s\n", ans5)
+	}
+	t.Logf("[OK]:skcmnlib.ConnectFields:戻値5: %s\n", ans5)
+
+}

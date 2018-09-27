@@ -34,13 +34,13 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 	return incolumnname, outcolumnname, err
 }
 
-// ConnectFields fieldsをconnectCharで結合し返す
-func ConnectFields(fields []string, connectChar byte) string {
+// ConnectFields fieldsをconnectCharで結合し返す。
+func ConnectFields(fields []string, connectChar string) string {
 	// メモリ確保
 	buf := make([]byte, 0, 100)
 	for i, field := range fields {
 		if i > 0 {
-			buf = append(buf, ' ')
+			buf = append(buf, connectChar...)
 		}
 		buf = append(buf, field...)
 	}

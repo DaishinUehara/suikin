@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+
 	"github.com/DaishinUehara/suikin/skcmnlib"
 )
 
@@ -37,7 +38,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	}
 
 	// 1行目(ヘッダ)の出力
-	fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(outcolumnname, ' '))
+	fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(outcolumnname, " "))
 
 	var selfields []string
 	for scanner.Scan() {
@@ -52,7 +53,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		if err != nil {
 			return err
 		}
-		fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(selfields, ' '))
+		fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(selfields, " "))
 	}
 	if err = scanner.Err(); err != nil {
 		return err
