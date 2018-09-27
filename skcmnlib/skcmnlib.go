@@ -34,13 +34,13 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 	return incolumnname, outcolumnname, err
 }
 
-// ConnectFields fieldsをconnectCharで結合し返す。
-func ConnectFields(fields []string, connectChar string) string {
+// ConnectFields fieldsをconnectStrで結合し返す。
+func ConnectFields(fields []string, connectStr string) string {
 	// メモリ確保
 	buf := make([]byte, 0, 100)
 	for i, field := range fields {
 		if i > 0 {
-			buf = append(buf, connectChar...)
+			buf = append(buf, connectStr...)
 		}
 		buf = append(buf, field...)
 	}
@@ -51,7 +51,7 @@ func ConnectFields(fields []string, connectChar string) string {
 func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int, error) {
 	fieldIndex := make([]int, 0, len(selectFieldNames))
 	for i, selectFieldName := range selectFieldNames {
-		l, err := getFieldIndex(headerFields, selectFieldName)
+		l, err := GetFieldIndex(headerFields, selectFieldName)
 		fieldIndex[i] = l
 		if err != nil {
 			return fieldIndex, err
@@ -60,8 +60,10 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 	return fieldIndex, nil
 }
 
-// ヘッダから文字列をリニアサーチしインデックスを返す。
-func getFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err error) {
+// GetFieldIndex 配列headerFieldsからfieldNameと完全一致する文字列をリニアサーチしインデックスを返す。
+// エラーの場合fieldIndexには-1が戻り、errが設定される。
+// fieldNameがheaderFieldsの複数に一致する場合には、一番若い番号のインデックスが戻る
+func GetFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err error) {
 	fieldIndex = -1
 	for i, headerFieldName := range headerFields {
 		if headerFieldName == fieldName {

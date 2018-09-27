@@ -127,3 +127,56 @@ func TestConnectFields(t *testing.T) {
 	t.Logf("[OK]:skcmnlib.ConnectFields:戻値5: %s\n", ans5)
 
 }
+
+func TestGetFieldIndex(t *testing.T) {
+
+	input1 := make([]string, 0, 5)
+	ans1, err1 := skcmnlib.GetFieldIndex(input1, "")
+	if err1 != nil || ans1 != -1 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndex(%v,\"\"):ans1=%d:err1=%v\n", input1, ans1, err1)
+	} else {
+		t.Errorf("[OK]:skcmnlib.GetFieldIndex(%v,\"\"):ans1=%d:err1=%v\n", input1, ans1, err1)
+	}
+
+	input2 := make([]string, 0, 5)
+	input2 = append(input2, "あいう")
+	ans2, err2 := skcmnlib.GetFieldIndex(input2, "")
+	if err2 != nil || ans2 != -1 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndex(%v,\"あいう\"):ans2=%d:err2=%v\n", input2, ans2, err2)
+	} else {
+		t.Errorf("[OK]:skcmnlib.GetFieldIndex(%v,\"あいう\"):ans2=%d:err2=%v\n", input2, ans2, err2)
+	}
+
+	input3 := make([]string, 0, 5)
+	input3 = append(input3, "あいう")
+	input3 = append(input3, "えおか")
+	ans3, err3 := skcmnlib.GetFieldIndex(input3, "えおか")
+	if err3 == nil || ans3 == 1 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndex(%v,\"えおか\"):ans3=%d:err3=%v\n", input3, ans3, err3)
+	} else {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndex(%v,\"えおか\"):ans3=%d:err3=%v\n", input3, ans3, err3)
+	}
+
+	input4 := make([]string, 0, 5)
+	input4 = append(input4, "あいう")
+	input4 = append(input4, "えおか")
+	input4 = append(input4, "あいう")
+	ans4, err4 := skcmnlib.GetFieldIndex(input4, "あいう")
+	if err4 == nil || ans4 == 0 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndex(%v,\"あいう\"):ans4=%d:err4=%v\n", input4, ans4, err4)
+	} else {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndex(%v,\"あいう\"):ans4=%d:err4=%v\n", input4, ans4, err4)
+	}
+}
+
+func TestGetFieldIndexArray(t *testing.T) {
+	header1 := make([]string, 0, 5)
+	select1 := make([]string, 0, 5)
+
+	idx1, err1 := skcmnlib.GetFieldIndexArray(header1, select1)
+	if len(idx1) == 0 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndex:header1=%v:select1=%v:idx1=%v:err1=%v\n", header1, select1, idx1, err1)
+	} else {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndex:header1=%v:select1=%v:idx1=%v:err1=%v\n", header1, select1, idx1, err1)
+	}
+}
