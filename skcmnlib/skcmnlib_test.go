@@ -65,33 +65,21 @@ func TestConnectFields(t *testing.T) {
 	instrArr1 := make([]string, 0, 5)
 	spc1 := " "
 	ans1 := skcmnlib.ConnectFields(instrArr1, spc1)
-	if len(instrArr1) == 0 {
-		t.Log("instrArr1 size is 0")
-	} else {
-		for i, instr := range instrArr1 {
-			t.Logf("[OK]:skcmnlib.ConnectFields:入力1 instrArr1[%d]=%s\n", i, instr)
-		}
-	}
-	t.Logf("[OK]:skcmnlib.ConnectFields:入力1 spc1=%v\n", spc1)
 
 	if ans1 != "" {
-		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値1: %s\n", ans1)
+		t.Errorf("[NG]:skcmnlib.ConnectFields(%v,%v):ans1=%s\n", instrArr1, spc1, ans1)
 	} else {
-		t.Logf("[OK]:skcmnlib.ConnectFields:戻値1: %s\n", ans1)
+		t.Logf("[OK]:skcmnlib.ConnectFields(%v,%v):ans1=%s\n", instrArr1, spc1, ans1)
 	}
 
 	var instrArr2 []string
 	var spc2 string
 	ans2 := skcmnlib.ConnectFields(instrArr2, spc2)
-	for i, instr := range instrArr2 {
-		t.Logf("[OK]:skcmnlib.ConnectFields:入力2 instArr[%d]=%s\n", i, instr)
-	}
-	t.Logf("[OK]:skcmnlib.ConnectFields:入力2 spc1=%v\n", spc2)
 
 	if ans1 != "" {
-		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値2: %s\n", ans2)
+		t.Errorf("[NG]:skcmnlib.ConnectFields(%v,%v):ans2=%s\n", instrArr2, spc2, ans2)
 	} else {
-		t.Logf("[OK]:skcmnlib.ConnectFields:戻値2: %s\n", ans2)
+		t.Logf("[OK]:skcmnlib.ConnectFields(%v,%v):ans2=%s\n", instrArr2, spc2, ans2)
 	}
 
 	instrArr3 := make([]string, 0, 5)
@@ -100,9 +88,9 @@ func TestConnectFields(t *testing.T) {
 
 	ans3 := skcmnlib.ConnectFields(instrArr3, spc3)
 	if ans3 != "てすてすと" {
-		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値3: %s\n", ans3)
+		t.Errorf("[NG]:skcmnlib.ConnectFields(%v,%v):ans3=%s\n", instrArr3, spc3, ans3)
 	}
-	t.Logf("[OK]:skcmnlib.ConnectFields:戻値3: %s\n", ans3)
+	t.Logf("[OK]:skcmnlib.ConnectFields(%v,%v):ans3=%s\n", instrArr3, spc3, ans3)
 
 	instrArr4 := make([]string, 0, 5)
 	spc4 := " "
@@ -111,9 +99,9 @@ func TestConnectFields(t *testing.T) {
 
 	ans4 := skcmnlib.ConnectFields(instrArr4, spc4)
 	if ans4 != "てすてすと1 てすてすと2" {
-		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値4: %s\n", ans4)
+		t.Errorf("[NG]:skcmnlib.ConnectFields(%v,%v):ans4=%s\n", instrArr4, spc4, ans4)
 	}
-	t.Logf("[OK]:skcmnlib.ConnectFields:戻値4: %s\n", ans4)
+	t.Logf("[OK]:skcmnlib.ConnectFields(%v,%v):ans4=%s\n", instrArr4, spc4, ans4)
 
 	instrArr5 := make([]string, 0, 5)
 	spc5 := ","
@@ -122,9 +110,9 @@ func TestConnectFields(t *testing.T) {
 
 	ans5 := skcmnlib.ConnectFields(instrArr5, spc5)
 	if ans5 != "てすてすと1,てすてすと2" {
-		t.Errorf("[NG]:skcmnlib.ConnectFields:戻値5: %s\n", ans5)
+		t.Errorf("[NG]:skcmnlib.ConnectFields(%v,%v):ans5=%s\n", instrArr5, spc5, ans5)
 	}
-	t.Logf("[OK]:skcmnlib.ConnectFields:戻値5: %s\n", ans5)
+	t.Logf("[OK]:skcmnlib.ConnectFields(%v,%v):ans5=%s\n", instrArr5, spc5, ans5)
 
 }
 
@@ -175,8 +163,38 @@ func TestGetFieldIndexArray(t *testing.T) {
 
 	idx1, err1 := skcmnlib.GetFieldIndexArray(header1, select1)
 	if len(idx1) == 0 {
-		t.Logf("[OK]:skcmnlib.GetFieldIndex:header1=%v:select1=%v:idx1=%v:err1=%v\n", header1, select1, idx1, err1)
+		t.Logf("[OK]:skcmnlib.GetFieldIndexArray(%v,%v):idx1=%v:err1=%v\n", header1, select1, idx1, err1)
 	} else {
-		t.Errorf("[NG]:skcmnlib.GetFieldIndex:header1=%v:select1=%v:idx1=%v:err1=%v\n", header1, select1, idx1, err1)
+		t.Errorf("[NG]:skcmnlib.GetFieldIndexArray(%v,%v):idx1=%v:err1=%v\n", header1, select1, idx1, err1)
 	}
+
+	header2 := make([]string, 0, 5)
+	header2 = append(header2, "項目1")
+	header2 = append(header2, "項目2")
+	header2 = append(header2, "項目3")
+
+	select2 := make([]string, 0, 5)
+
+	idx2, err2 := skcmnlib.GetFieldIndexArray(header2, select2)
+	if len(idx2) == 0 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndexArray(%v,%v):idx2=%v:err2=%v\n", header2, select2, idx2, err2)
+	} else {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndexArray(%v,%v):idx2=%v:err2=%v\n", header2, select2, idx2, err2)
+	}
+
+	header3 := make([]string, 0, 5)
+	header3 = append(header3, "項目1")
+	header3 = append(header3, "項目2")
+	header3 = append(header3, "項目3")
+
+	select3 := make([]string, 0, 5)
+	select3 = append(select3, "項目4")
+
+	idx3, err3 := skcmnlib.GetFieldIndexArray(header3, select3)
+	if err3 != nil {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndexArray(%v,%v):idx3=%v:err3=%v\n", header3, select3, idx3, err3)
+	} else {
+		t.Logf("[OK]:skcmnlib.GetFieldIndexArray(%v,%v):idx3=%v:err3=%v\n", header3, select3, idx3, err3)
+	}
+
 }
