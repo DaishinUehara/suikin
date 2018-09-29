@@ -191,10 +191,78 @@ func TestGetFieldIndexArray(t *testing.T) {
 	select3 = append(select3, "項目4")
 
 	idx3, err3 := skcmnlib.GetFieldIndexArray(header3, select3)
-	if err3 != nil {
+	if err3 == nil || idx3[0] != -1 {
 		t.Errorf("[NG]:skcmnlib.GetFieldIndexArray(%v,%v):idx3=%v:err3=%v\n", header3, select3, idx3, err3)
 	} else {
 		t.Logf("[OK]:skcmnlib.GetFieldIndexArray(%v,%v):idx3=%v:err3=%v\n", header3, select3, idx3, err3)
 	}
 
+	header4 := make([]string, 0, 5)
+	header4 = append(header4, "項目1")
+	header4 = append(header4, "項目2")
+	header4 = append(header4, "項目3")
+	header4 = append(header4, "項目4")
+
+	select4 := make([]string, 0, 5)
+	select4 = append(select4, "項目4")
+	select4 = append(select4, "項目1")
+
+	idx4, err4 := skcmnlib.GetFieldIndexArray(header4, select4)
+	if err4 == nil && idx4[0] == 3 && idx4[1] == 0 && len(idx4) == 2 {
+		t.Logf("[OK]:skcmnlib.GetFieldIndexArray(%v,%v):idx4=%v:err4=%v\n", header4, select4, idx4, err4)
+	} else {
+		t.Errorf("[NG]:skcmnlib.GetFieldIndexArray(%v,%v):idx4=%v:err4=%v\n", header4, select4, idx4, err4)
+	}
+
+}
+
+func TestSeparateField(t *testing.T) {
+
+	line1 := ""
+	st1, err1 := skcmnlib.SeparateField(line1)
+	if len(st1) == 0 && err1 == nil {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st1=%v:err1=%v\n", line1, st1, err1)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st1=%v:err1=%v\n", line1, st1, err1)
+	}
+
+	line2 := "項目1"
+	st2, err2 := skcmnlib.SeparateField(line2)
+	if len(st2) == 1 && err2 == nil && st2[0] == "項目1" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st2=%v:err2=%v\n", line2, st2, err2)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st2=%v:err2=%v\n", line2, st2, err2)
+	}
+
+	line3 := "項目1 項目2"
+	st3, err3 := skcmnlib.SeparateField(line3)
+	if len(st3) == 2 && err3 == nil && st3[0] == "項目1" && st3[1] == "項目2" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st3=%v:err3=%v\n", line3, st3, err3)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st3=%v:err3=%v\n", line3, st3, err3)
+	}
+
+	line4 := "項目1  項目2"
+	st4, err4 := skcmnlib.SeparateField(line4)
+	if len(st4) == 2 && err4 == nil && st4[0] == "項目1" && st4[1] == "項目2" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st4=%v:err4=%v\n", line4, st4, err4)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st4=%v:err4=%v\n", line4, st4, err4)
+	}
+
+	line5 := "項目1 項目2 "
+	st5, err5 := skcmnlib.SeparateField(line5)
+	if len(st5) == 2 && err5 == nil && st5[0] == "項目1" && st5[1] == "項目2" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st5=%v:err5=%v\n", line5, st5, err5)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st5=%v:err5=%v\n", line5, st5, err5)
+	}
+
+	line6 := "項目1 項目2\t 項目3\t"
+	st6, err6 := skcmnlib.SeparateField(line6)
+	if len(st6) == 3 && err6 == nil && st6[0] == "項目1" && st6[1] == "項目2" && st6[2] == "項目3" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st6=%v:err6=%v\n", line6, st6, err6)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st6=%v:err6=%v\n", line6, st6, err6)
+	}
 }

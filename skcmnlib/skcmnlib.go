@@ -47,19 +47,6 @@ func ConnectFields(fields []string, connectStr string) string {
 	return string(buf)
 }
 
-// GetFieldIndexArray headerFieldsからselectFieldNamesに格納した文字列配列に一致するヘッダ文字列を検索し位置配列を返す。
-func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int, error) {
-	fieldIndex := make([]int, 0, len(selectFieldNames))
-	for i, selectFieldName := range selectFieldNames {
-		l, err := GetFieldIndex(headerFields, selectFieldName)
-		fieldIndex[i] = l
-		if err != nil {
-			return fieldIndex, err
-		}
-	}
-	return fieldIndex, nil
-}
-
 // GetFieldIndex 配列headerFieldsからfieldNameと完全一致する文字列をリニアサーチしインデックスを返す。
 // エラーの場合fieldIndexには-1が戻り、errが設定される。
 // fieldNameがheaderFieldsの複数に一致する場合には、一番若い番号のインデックスが戻る
@@ -75,6 +62,19 @@ func GetFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err
 		//err = errors.New(fmt.Sprintf("No FieldName: %s", fieldName))
 		err = fmt.Errorf("No FieldName: %s", fieldName)
 		return fieldIndex, err
+	}
+	return fieldIndex, nil
+}
+
+// GetFieldIndexArray headerFieldsからselectFieldNamesに格納した文字列配列に一致するヘッダ文字列を検索し位置配列を返す。
+func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int, error) {
+	fieldIndex := make([]int, 0, len(selectFieldNames))
+	for _, selectFieldName := range selectFieldNames {
+		l, err := GetFieldIndex(headerFields, selectFieldName)
+		fieldIndex = append(fieldIndex, l)
+		if err != nil {
+			return fieldIndex, err
+		}
 	}
 	return fieldIndex, nil
 }
@@ -132,6 +132,9 @@ func SeparateField(line string) (st []string, err error) {
 				isSpace = true
 			}
 		}
+	}
+	if len(rword) > 0 {
+		st = append(st, string(rword))
 	}
 	return st, err
 }
