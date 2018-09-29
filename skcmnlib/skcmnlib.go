@@ -80,8 +80,8 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 }
 
 // SeparateField stringをスペースもしくはタブで区切ったstring配列に格納します。
-// '\ 'は区切り文字ではなくデータのスペースとして扱われます。
-// '\0'は長さ0のブランク文字列として扱います。
+// スペース自体をデータとして扱う場合には'\ 'とします。
+// tab自体をデータとして扱う場合には'\t'とします。
 func SeparateField(line string) (st []string, err error) {
 	st = make([]string, 0, 50) // makeで初期capacityを指定して予めメモリを確保
 
@@ -92,25 +92,8 @@ func SeparateField(line string) (st []string, err error) {
 	for _, unc := range line {
 		if isBackSlash {
 			// 前の文字がバックスラッシュだった場合
-			if unc == rune('\\') {
-				if isSpace {
-					st = append(st, string(rword))
-					rword = make([]rune, 0, 255)
-				}
-				rword = append(rword, unc)
-			} else if unc == rune(' ') || unc == rune('t') {
-				if isSpace {
-					st = append(st, string(rword))
-					rword = make([]rune, 0, 255)
-				}
-				rword = append(rword, unc)
-			} else if unc == rune('0') {
-				if isSpace {
-					st = append(st, string(rword))
-					rword = make([]rune, 0, 255)
-				}
-				rword = append(rword, rune(0)) // \0 はrune(0)とする
-			}
+			rword = append(rword, '\\')
+			rword = append(rword, unc)
 			isBackSlash = false
 			isSpace = false
 		} else {

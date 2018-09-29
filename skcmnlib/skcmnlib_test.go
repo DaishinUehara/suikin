@@ -265,4 +265,12 @@ func TestSeparateField(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st6=%v:err6=%v\n", line6, st6, err6)
 	}
+
+	line7 := "項目1\\t項目2\t 項目3\t"
+	st7, err7 := skcmnlib.SeparateField(line7)
+	if len(st7) == 2 && err7 == nil && st7[0] == "項目1\\t項目2" && st7[1] == "項目3" {
+		t.Logf("[OK]:skcmnlib.SeparateField(%v):st7=%v:err7=%v\n", line7, st7, err7)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st7=%v:err7=%v\n", line7, st7, err7)
+	}
 }
