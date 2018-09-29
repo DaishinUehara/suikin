@@ -135,12 +135,26 @@ func SeparateField(line string) (st []string, err error) {
 
 ///////////////////////////////
 
-// DateToUnixSec yyyymmddをunix時間に直す
+// DateToUnixSec yyyy[mm[dd[HHMMSS]]]をunix時間に直す
 func DateToUnixSec(timestr string) (int64, error) {
 	l := len(timestr)
 	layoutBase := "20060102030405"
 	layout := layoutBase[0:l]
 	t1, e1 := time.Parse(layout, timestr)
+	if e1 != nil {
+		return 0, fmt.Errorf("usp.DateToUnixSec: %v", e1)
+	}
+	return t1.Unix(), nil
+}
+
+// TimeToUnixSec HHMMSSをunix時間に直す
+func TimeToUnixSec(timestr string) (int64, error) {
+	l := len(timestr)
+	layoutBase := "20060102030405"
+	topstrBase := "19700101000000"
+	topstr := topstrBase[0 : len(topstrBase)-l]
+	tmptime := topstr + timestr
+	t1, e1 := time.Parse(layoutBase, tmptime)
 	if e1 != nil {
 		return 0, fmt.Errorf("usp.DateToUnixSec: %v", e1)
 	}

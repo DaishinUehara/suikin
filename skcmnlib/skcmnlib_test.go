@@ -273,4 +273,90 @@ func TestSeparateField(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:skcmnlib.SeparateField(%v):st7=%v:err7=%v\n", line7, st7, err7)
 	}
+
+}
+
+func TestDateToUnixSec(t *testing.T) {
+	str1 := "19700101000000"
+	sec1, err1 := skcmnlib.DateToUnixSec(str1) // YYYYMMDDhhmmss
+	if sec1 == 0 && err1 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec1=%v:err1=%v\n", str1, sec1, err1)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec1=%v:err1=%v\n", str1, sec1, err1)
+	}
+
+	str2 := "19700101000001"
+	sec2, err2 := skcmnlib.DateToUnixSec(str2) // YYYYMMDDhhmmss
+	if sec2 == 1 && err2 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec2=%v:err2=%v\n", str2, sec2, err2)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec2=%v:err2=%v\n", str2, sec2, err2)
+	}
+
+	str3 := "19700101000101"
+	sec3, err3 := skcmnlib.DateToUnixSec(str3) // YYYYMMDDhhmmss
+	if sec3 == 61 && err3 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec3=%v:err3=%v\n", str3, sec3, err3)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec3=%v:err3=%v\n", str3, sec3, err3)
+	}
+
+	str4 := "19700101010101"
+	sec4, err4 := skcmnlib.DateToUnixSec(str4) // YYYYMMDDhhmmss
+	if sec4 == 3661 && err4 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec4=%v:err4=%v\n", str4, sec4, err4)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec4=%v:err4=%v\n", str4, sec4, err4)
+	}
+
+	str5 := "197001010000"
+	sec5, err5 := skcmnlib.DateToUnixSec(str5) // YYYYMMDDhhmm
+	if sec5 == 0 && err5 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec5=%v:err5=%v\n", str5, sec5, err5)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec5=%v:err5=%v\n", str5, sec5, err5)
+	}
+
+	str6 := "197001010001"
+	sec6, err6 := skcmnlib.DateToUnixSec(str6) // YYYYMMDDhhmm
+	if sec6 == 60 && err6 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec6=%v:err6=%v\n", str6, sec6, err6)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec6=%v:err6=%v\n", str6, sec6, err6)
+	}
+
+	str7 := "1970010101"
+	sec7, err7 := skcmnlib.DateToUnixSec(str7) // YYYYMMDDhh
+	if sec7 == 3600 && err7 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec7=%v:err7=%v\n", str7, sec7, err7)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec7=%v:err7=%v\n", str7, sec7, err7)
+	}
+
+	str8 := "19700102"
+	sec8, err8 := skcmnlib.DateToUnixSec(str8) // YYYYMMDD
+	if sec8 == 86400 && err8 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec8=%v:err8=%v\n", str8, sec8, err8)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec8=%v:err8=%v\n", str8, sec8, err8)
+	}
+
+	str9 := "197002"
+	sec9, err9 := skcmnlib.DateToUnixSec(str9) // YYYYMM
+	if sec9 == 2678400 && err9 == nil {
+		t.Logf("[OK]:skcmnlib.DateToUnixSec(%v):sec9=%v:err9=%v\n", str9, sec9, err9)
+	} else {
+		t.Errorf("[NG]:skcmnlib.DateToUnixSec(%v):sec9=%v:err9=%v\n", str9, sec9, err9)
+	}
+
+}
+
+func TestTimeToUnixSec(t *testing.T) {
+	str1 := "000000"
+	sec1, err1 := skcmnlib.TimeToUnixSec(str1) // YYYYMMDDhhmmss
+	if sec1 == 0 && err1 == nil {
+		t.Logf("[OK]:skcmnlib.TimeToUnixSec(%v):sec1=%v:err1=%v\n", str1, sec1, err1)
+	} else {
+		t.Errorf("[NG]:skcmnlib.TimeToUnixSec(%v):sec1=%v:err1=%v\n", str1, sec1, err1)
+	}
 }
