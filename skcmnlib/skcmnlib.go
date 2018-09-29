@@ -92,8 +92,17 @@ func SeparateField(line string) (st []string, err error) {
 	for _, unc := range line {
 		if isBackSlash {
 			// 前の文字がバックスラッシュだった場合
-			rword = append(rword, '\\')
-			rword = append(rword, unc)
+			if unc == '\\' {
+				rword = append(rword, unc)
+			} else if unc == 't' {
+				rword = append(rword, '\t')
+			} else if unc == '0' {
+				rword = append(rword, rune(0))
+			} else if unc == ' ' {
+				rword = append(rword, ' ')
+			} else if unc == '\t' {
+				rword = append(rword, '\t')
+			}
 			isBackSlash = false
 			isSpace = false
 		} else {
