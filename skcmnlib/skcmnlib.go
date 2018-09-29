@@ -80,8 +80,10 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 }
 
 // SeparateField stringをスペースもしくはタブで区切ったstring配列に格納します。
-// スペース自体をデータとして扱う場合には'\ 'とします。
-// tab自体をデータとして扱う場合には'\t'とします。
+// スペース自体をデータとして扱う場合の入力文字列中のスペースは'\ 'と表現すると、
+// 配列の文字列データ中にスペースが入ります。
+// tab自体をデータとして扱う場合の入力文字列は'\t'と表現すると、
+// 配列の文字列データ中にタブが入ります。
 func SeparateField(line string) (st []string, err error) {
 	st = make([]string, 0, 50) // makeで初期capacityを指定して予めメモリを確保
 
