@@ -49,7 +49,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		}
 
 		// 分割されたフィールドから出力する文字列の順番に配列に格納
-		selfields, err = selectFields(fields, fieldIndex)
+		selfields, err = skcmnlib.SortByIndex(fields, fieldIndex)
 		if err != nil {
 			return err
 		}
@@ -72,13 +72,4 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	}
 
 	return nil
-}
-
-// 区切られたフィールドをfieldIndexに並び替えselfield配列に格納して返す。
-func selectFields(fields []string, fieldIndex []int) (selfields []string, err error) {
-	selfields = make([]string, 0, 50)
-	for _, fi := range fieldIndex {
-		selfields = append(selfields, fields[fi])
-	}
-	return selfields, err
 }

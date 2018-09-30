@@ -133,6 +133,21 @@ func SeparateField(line string) (st []string, err error) {
 	return st, err
 }
 
+// SortByIndex inputarray配列をindexの順番に並び替えselfield配列に格納して返す。
+func SortByIndex(inputarray []string, index []int) (sortarray []string, err error) {
+	sortarray = make([]string, 0, 50)
+	inarrsize := len(inputarray)
+	for _, fi := range index {
+		if inarrsize <= fi {
+			err = fmt.Errorf("Out Of Index inputarray[%d]", fi)
+			sortarray = make([]string, 0)
+			return sortarray, err
+		}
+		sortarray = append(sortarray, inputarray[fi])
+	}
+	return sortarray, err
+}
+
 ///////////////////////////////
 
 // DateToUnixSec yyyy[mm[dd[HHMMSS]]]をunix時間に直す

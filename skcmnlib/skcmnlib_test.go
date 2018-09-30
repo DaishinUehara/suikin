@@ -276,6 +276,94 @@ func TestSeparateField(t *testing.T) {
 
 }
 
+func TestSortByIndex(t *testing.T) {
+	inarr := make([]string, 0, 10)
+	idxarr := make([]int, 0, 10)
+
+	srtarr, err := skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 0 && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	idxarr = append(idxarr, 0)
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 0 && err != nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	inarr = append(inarr, "")
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 0 && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	inarr = append(inarr, "")
+	idxarr = append(idxarr, 0)
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 1 && srtarr[0] == "" && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	inarr = append(inarr, "a")
+	inarr = append(inarr, "b")
+	idxarr = append(idxarr, 0)
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 1 && srtarr[0] == "a" && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	inarr = append(inarr, "a")
+	inarr = append(inarr, "b")
+	idxarr = append(idxarr, 1)
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 1 && srtarr[0] == "b" && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+	inarr = make([]string, 0, 10)
+	idxarr = make([]int, 0, 10)
+	inarr = append(inarr, "a")
+	inarr = append(inarr, "b")
+	idxarr = append(idxarr, 1)
+	idxarr = append(idxarr, 0)
+	idxarr = append(idxarr, 1)
+
+	srtarr, err = skcmnlib.SortByIndex(inarr, idxarr)
+	if len(srtarr) == 3 && srtarr[0] == "b" && srtarr[1] == "a" && srtarr[2] == "b" && err == nil {
+		t.Logf("[OK]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	} else {
+		t.Errorf("[NG]:skcmnlib.SortByIndex(%v,%v):srtarr=%v:err=%v\n", inarr, idxarr, srtarr, err)
+	}
+
+}
+
 func TestDateToUnixSec(t *testing.T) {
 	str1 := "19700101000000"
 	sec1, err1 := skcmnlib.DateToUnixSec(str1) // YYYYMMDDhhmmss
