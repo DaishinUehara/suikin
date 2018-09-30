@@ -6,10 +6,26 @@ import (
 	"io"
 
 	"github.com/DaishinUehara/suikin/skcmnlib"
+	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
 // Exec はselfを実行する
 func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []string, outcolumnname []string) (err error) {
+
+	if stdin == nil {
+		//		err = fmt.Errorf("stdin io.Reader not initialized!")
+		return skerrlib.ErrNotInitialized{NoInitializedItem: "stdin io.Reader"}
+	}
+
+	if stdout == nil {
+		//		err = fmt.Errorf("stdout io.Writer not initialized!")
+		return skerrlib.ErrNotInitialized{NoInitializedItem: "stdout io.Writer"}
+	}
+
+	if stderr == nil {
+		//		err = fmt.Errorf("stderr io.Writer not initialized!")
+		return skerrlib.ErrNotInitialized{NoInitializedItem: "stderr io.Writer"}
+	}
 
 	scanner := bufio.NewScanner(stdin)
 	stdoutBuffer := bufio.NewWriter(stdout)
