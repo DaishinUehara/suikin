@@ -76,15 +76,14 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	}
 
 	// 結果をflushする。
-	stdoutBuffer.Flush()
+	err = stdoutBuffer.Flush()
 	if err != nil {
 		fmt.Fprintf(stderrBuffer, "Stdout Flush error: %v\n", err)
-		return err
+		return skerrlib.ErrFlushBuffer{ErrorItem: "stdoutBuffer"}
 	}
-	stderrBuffer.Flush()
+	err = stderrBuffer.Flush()
 	if err != nil {
-		fmt.Fprintf(stderrBuffer, "Stderr Flush error: %v\n", err)
-		return err
+		return skerrlib.ErrFlushBuffer{ErrorItem: "stderrBuffer"}
 	}
 
 	return nil

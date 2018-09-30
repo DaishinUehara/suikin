@@ -4,6 +4,7 @@ import "fmt"
 
 const E0001_MSG = "E0001:%s[%d] is Out of Index.\n"
 const E0002_MSG = "E0002:%s is not initialized!\n"
+const E0003_MSG = "E0003:Buffer %s flush Error!\n"
 
 // スライス(配列)の範囲外へのアクセスを実施した場合
 type ErrOutOfIndex struct {
@@ -22,4 +23,13 @@ type ErrNotInitialized struct {
 
 func (e ErrNotInitialized) Error() string {
 	return fmt.Sprintf(E0002_MSG, e.NoInitializedItem)
+}
+
+// バッファのflushがエラーとなった場合
+type ErrFlushBuffer struct {
+	ErrorItem string
+}
+
+func (e ErrFlushBuffer) Error() string {
+	return fmt.Sprintf(E0003_MSG, e.ErrorItem)
 }
