@@ -16,8 +16,12 @@ func TestExec(t *testing.T) {
 	var stdout1 *bytes.Buffer
 	var stderr1 *bytes.Buffer
 	var err error
-	incolumnname := make([]string, 0)
-	outcolumnname := make([]string, 0)
+	var incolumnname []string
+	var outcolumnname []string
+	incolumnname = make([]string, 0)
+	outcolumnname = make([]string, 0)
+
+	// ↓initial error
 
 	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)
 	if err != nil {
@@ -43,9 +47,24 @@ func TestExec(t *testing.T) {
 		t.Errorf("[OK]:skselflib.Exec(%v,%v,%v,%v,%v):err=%v\n", stdin1, stdout1, stderr, incolumnname, outcolumnname, err)
 	}
 
+	// ↑initial error
+
 	stdin1 = bytes.NewBufferString("")
 	stdout1 = new(bytes.Buffer)
 	stderr1 = new(bytes.Buffer)
+	err = skselflib.Exec(stdin1, stdout1, stderr1, incolumnname, outcolumnname)
+	if err == nil && stdout1.String() == "" && stderr1.String() == "" {
+		t.Logf("[OK]:skselflib.Exec(%v,%v,%v,%v,%v):err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, err)
+	} else {
+		t.Errorf("[NG]:skselflib.Exec(%v,%v,%v,%v,%v):err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, err)
+	}
+
+	stdin1 = bytes.NewBufferString("")
+	stdout1 = new(bytes.Buffer)
+	stderr1 = new(bytes.Buffer)
+	incolumnname = make([]string, 0)
+	incolumnname = append(incolumnname, "項目1")
+
 	err = skselflib.Exec(stdin1, stdout1, stderr1, incolumnname, outcolumnname)
 	if err == nil && stdout1.String() == "" && stderr1.String() == "" {
 		t.Logf("[OK]:skselflib.Exec(%v,%v,%v,%v,%v):err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, err)
