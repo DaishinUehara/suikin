@@ -12,6 +12,7 @@ import (
 // Exec はselfを実行する
 func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []string, outcolumnname []string) (err error) {
 
+	// ここから入力チェック
 	if stdin == nil {
 		//		err = fmt.Errorf("stdin io.Reader not initialized!")
 		return skerrlib.ErrNotInitialized{NoInitializedItem: "stdin io.Reader"}
@@ -27,12 +28,25 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		return skerrlib.ErrNotInitialized{NoInitializedItem: "stderr io.Writer"}
 	}
 
+	incolumnlen := len(incolumnname)
+	outcolumnlen := len(outcolumnname)
+
+	if incolumnlen != outcolumnlen {
+		// 入力と出力が1対1で対応していない場合、エラーとする
+		return skerrlib.ErrInFieldCnt_NE_OutFieldCnt{InFieldCount: incolumnlen, OutFieldCount: outcolumnlen}
+	}
+
+	if incolumnlen == 0 && outcolumnlen == 0 {
+		// 入力フィールドも出力フィールドもない場合、なにもしない
+		return nil
+	}
+	// ここまで入力チェック
+
 	scanner := bufio.NewScanner(stdin)
 	stdoutBuffer := bufio.NewWriter(stdout)
 	stderrBuffer := bufio.NewWriter(stderr)
 
 	var line0 string // 1 行目
-
 	if scanner.Scan() {
 		line0 = scanner.Text()
 	} else {
@@ -54,7 +68,10 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	}
 
 	// 1行目(ヘッダ)の出力
-	fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(outcolumnname, " "))
+	headerstr := skcmnlib.ConnectFields(outcolumnname, " ")
+	if len(headerstr) > 0 {
+		fmt.Fprintln(stdoutBuffer, headerstr)
+	}
 
 	var selfields []string
 	for scanner.Scan() {
