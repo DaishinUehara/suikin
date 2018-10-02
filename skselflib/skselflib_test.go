@@ -123,4 +123,46 @@ func TestExec(t *testing.T) {
 		t.Errorf("[NG]:skselflib.Exec(%v,%v,%v,%v,%v):stdout1_str=%v,stderr1_str=%v,err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, stdout1_str, stderr1_str, err)
 	}
 
+	stdin1 = bytes.NewBufferString("項目1 項目2 項目3\n1 2 3")
+	stdout1 = new(bytes.Buffer)
+	stderr1 = new(bytes.Buffer)
+	incolumnname = make([]string, 0)
+	incolumnname = append(incolumnname, "項目1")
+	incolumnname = append(incolumnname, "項目3")
+	outcolumnname = make([]string, 0)
+	outcolumnname = append(outcolumnname, "項目a")
+	outcolumnname = append(outcolumnname, "項目c")
+
+	err = skselflib.Exec(stdin1, stdout1, stderr1, incolumnname, outcolumnname)
+	stdout1_str = stdout1.String()
+	stderr1_str = stderr1.String()
+	if err == nil && stdout1_str == "項目a 項目c\n1 3\n" && stderr1_str == "" {
+		t.Logf("[OK]:skselflib.Exec(%v,%v,%v,%v,%v):stdout1_str=%v,stderr1_str=%v,err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, stdout1_str, stderr1_str, err)
+	} else {
+		t.Errorf("[NG]:skselflib.Exec(%v,%v,%v,%v,%v):stdout1_str=%v,stderr1_str=%v,err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, stdout1_str, stderr1_str, err)
+	}
+
+	stdin1 = bytes.NewBufferString("項目1 項目2 項目3\n1 2 3\n4 5 6")
+	stdout1 = new(bytes.Buffer)
+	stderr1 = new(bytes.Buffer)
+	incolumnname = make([]string, 0)
+	incolumnname = append(incolumnname, "項目3")
+	incolumnname = append(incolumnname, "項目1")
+	incolumnname = append(incolumnname, "項目3")
+	incolumnname = append(incolumnname, "項目2")
+	outcolumnname = make([]string, 0)
+	outcolumnname = append(outcolumnname, "項目c")
+	outcolumnname = append(outcolumnname, "項目a")
+	outcolumnname = append(outcolumnname, "項目c")
+	outcolumnname = append(outcolumnname, "項目b")
+
+	err = skselflib.Exec(stdin1, stdout1, stderr1, incolumnname, outcolumnname)
+	stdout1_str = stdout1.String()
+	stderr1_str = stderr1.String()
+	if err == nil && stdout1_str == "項目c 項目a 項目c 項目b\n3 1 3 2\n6 4 6 5\n" && stderr1_str == "" {
+		t.Logf("[OK]:skselflib.Exec(%v,%v,%v,%v,%v):stdout1_str=%v,stderr1_str=%v,err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, stdout1_str, stderr1_str, err)
+	} else {
+		t.Errorf("[NG]:skselflib.Exec(%v,%v,%v,%v,%v):stdout1_str=%v,stderr1_str=%v,err=%v\n", stdin1, stdout1, stderr1, incolumnname, outcolumnname, stdout1_str, stderr1_str, err)
+	}
+
 }
