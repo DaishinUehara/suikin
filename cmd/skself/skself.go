@@ -41,8 +41,8 @@ selc 入力ファイル|- 出力ファイル|- エラー出力ファイル|- [�
 func main() {
 	err := selfExec(os.Args)
 	if err != nil {
-		switch err := err.(type) {
-		case ErrArgument:
+		switch err.(type) {
+		case skerrlib.ErrArgument:
 			printUsage()
 		default:
 			fmt.Printf("Got unexpected error!\n")
