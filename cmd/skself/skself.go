@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+
 	"github.com/DaishinUehara/suikin/skcmnlib"
+	"github.com/DaishinUehara/suikin/skerrlib"
 	"github.com/DaishinUehara/suikin/skselflib"
 )
 
@@ -37,19 +39,24 @@ selc 入力ファイル|- 出力ファイル|- エラー出力ファイル|- [�
 
 */
 func main() {
-	arglen := len(os.Args)
-	if arglen < 4 {
-		printUsage()
-		os.Exit(1)
-	}
 	err := selfExec(os.Args)
 	if err != nil {
+		switch err := err.(type) {
+		case ErrArgument:
+			printUsage()
+		default:
+			fmt.Printf("Got unexpected error!\n")
+		}
 		os.Exit(1)
 	}
 	os.Exit(0)
 }
 
 func selfExec(argv []string) error {
+	arglen := len(argv)
+	if arglen < 4 {
+		return skerrlib.ErrArgument{Argv: argv}
+	}
 
 	var selectColumnName []string
 	selectColumnName = make([]string, 0, 20)

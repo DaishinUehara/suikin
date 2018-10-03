@@ -6,6 +6,7 @@ const E0001_MSG = "E0001:%s[%d] is Out of Index.\n"
 const E0002_MSG = "E0002:%s is not initialized!\n"
 const E0003_MSG = "E0003:Buffer %s flush Error!\n"
 const E0004_MSG = "E0004:Input filds count %d is not output fild count %d!\n"
+const E0005_MSG = "E0005:Argument Error %v!\n"
 
 // スライス(配列)の範囲外へのアクセスを実施した場合
 type ErrOutOfIndex struct {
@@ -43,4 +44,13 @@ type ErrInFieldCnt_NE_OutFieldCnt struct {
 
 func (e ErrInFieldCnt_NE_OutFieldCnt) Error() string {
 	return fmt.Sprintf(E0004_MSG, e.InFieldCount, e.OutFieldCount)
+}
+
+// 入力フィールド数と出力フィールド数が一致すべきときに一致しない場合
+type ErrArgument struct {
+	Argv []string
+}
+
+func (e ErrArgument) Error() string {
+	return fmt.Sprintf(E0005_MSG, e.Argv)
 }
