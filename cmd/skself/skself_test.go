@@ -15,4 +15,34 @@ func TestSelExec(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:main.selfExec(%v):err=%v\n", argv, err)
 	}
+
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	err = selfExec(argv)
+	if err != nil {
+		t.Logf("[OK]:main.selfExec(%v):err=%v\n", argv, err)
+	} else {
+		t.Errorf("[NG]:main.selfExec(%v):err=%v\n", argv, err)
+	}
+
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	argv = append(argv, "-")
+	err = selfExec(argv)
+	if err != nil {
+		t.Logf("[OK]:main.selfExec(%v):err=%v\n", argv, err)
+	} else {
+		t.Errorf("[NG]:main.selfExec(%v):err=%v\n", argv, err)
+	}
+
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	err = selfExec(argv)
+	if err != nil {
+		t.Logf("[OK]:main.selfExec(%v):err=%v\n", argv, err)
+	} else {
+		t.Errorf("[NG]:main.selfExec(%v):err=%v\n", argv, err)
+	}
 }
