@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
-// SkStubStd Stdin Stdout Stderr stub for fn func()
-func SkStubStd(inbuf string, fn func()) (strStdOut string, strStdErr string) {
+// SkStdStub Stdin Stdout Stderr stub for fn func()
+func SkStdStub(inbuf string, fn func()) (strStdOut string, strStdErr string) {
 	inrp, inwp, _ := os.Pipe()   // Input Pipe
 	outrp, outwp, _ := os.Pipe() // Std Output Pipe
 	errrp, errwp, _ := os.Pipe() // Std Error Pipe
