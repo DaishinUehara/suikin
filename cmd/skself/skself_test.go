@@ -77,4 +77,19 @@ func TestSelExec(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
 	}
+
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	argv = append(argv, "項目1")
+	strStdIn = "項目2"
+	strStdOut, strStdErr, err = skstublib.SkStdStub(strStdIn, argv, func(argv1 []string) error { err1 := selfExec(argv1); return err1 })
+	if err != nil && strStdOut == "" && strStdErr == "" {
+		t.Logf("[OK]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
+	} else {
+		t.Errorf("[NG]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
+	}
+
 }

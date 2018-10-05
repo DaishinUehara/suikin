@@ -81,7 +81,8 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		infile, err = os.Open(argv[1])
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Input File %s scan error: %v\n", argv[1], err)
+			return skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err}
+			// fmt.Fprintf(os.Stderr, "Input File %s open error: %v\n", argv[1], err)
 		}
 		defer infile.Close() // 関数return時に閉じる
 		stdin = bufio.NewReader(infile)
@@ -94,7 +95,8 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		outfile, err = os.Open(argv[2])
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Input File %s scan error: %v\n", argv[2], err)
+			return skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err}
+			// fmt.Fprintf(os.Stderr, "Output File %s open error: %v\n", argv[2], err)
 		}
 		defer outfile.Close() // 関数return時に閉じる
 		stdout = bufio.NewWriter(outfile)
@@ -107,7 +109,8 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		errfile, err = os.Open(os.Args[3])
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Input File %s scan error: %v\n", argv[3], err)
+			return skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err}
+			// fmt.Fprintf(os.Stderr, "Standard Error File %s open error: %v\n", argv[3], err)
 		}
 		defer errfile.Close() // 関数return時に閉じる
 		stderr = bufio.NewWriter(errfile)
@@ -121,8 +124,14 @@ func selfExec(argv []string) error {
 
 	incolumnname, outcolumnname, err = skcmnlib.CammaDivide(selectColumnName)
 	if err != nil {
-		fmt.Fprintf(stderr, "Select Column Arguments Error selectColumnName=%v:err=%v\n", selectColumnName, err)
-		return err
+		switch err.(type) {
+		case skerrlib.ErrInputOutputColumNameFormat:
+			// fmt.Fprintf(stderr, "Select Column Arguments Error selectColumnName=%v:err=%v\n", selectColumnName, err)
+			// return err
+			return err
+		default:
+			return skerrlib.ErrUnexpected{Err: err}
+		}
 	}
 
 	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)

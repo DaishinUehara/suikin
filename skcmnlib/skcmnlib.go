@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
 // CammaDivide カンマで区切って2つの配列に分けて格納する
@@ -28,7 +30,8 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 			incolumnname = append(incolumnname, columnarray[0])
 			outcolumnname = append(outcolumnname, columnarray[1])
 		} else {
-			err = fmt.Errorf("Input/Output Column Name Format Error: %s", column)
+			// err = fmt.Errorf("Input/Output Column Name Format Error: %s", column)
+			return incolumnname, outcolumnname, skerrlib.ErrInputOutputColumNameFormat{ColumnName: column}
 		}
 	}
 	return incolumnname, outcolumnname, err
@@ -60,7 +63,8 @@ func GetFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err
 	}
 	if fieldIndex == -1 {
 		//err = errors.New(fmt.Sprintf("No FieldName: %s", fieldName))
-		err = fmt.Errorf("No FieldName: %s", fieldName)
+		// err = fmt.Errorf("No FieldName: %s", fieldName)
+		err = skerrlib.ErrNoInputFieldName{FieldName: fieldName}
 		return fieldIndex, err
 	}
 	return fieldIndex, nil

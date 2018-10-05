@@ -18,7 +18,25 @@ const E0004MSG = "E0004:Input filds count %d is not output fild count %d!\n"
 const E0005MSG = "E0005:Argument Error %v!\n"
 
 // E0006MSG Input Data Header Record Error Message.
-const E0006MSG = "E0006:No Header Record Field %v Error!\n"
+const E0006MSG = "E0006:No Header Record Field %s Error!\n"
+
+// E0007MSG Standard Input File Open Error Message
+const E0007MSG = "E0007:Standard Input File %s Open Error!:%v\n"
+
+// E0008MSG Standard Output File Open Error Message
+const E0008MSG = "E0008:Standard Output File %s Open Error!:%v\n"
+
+// E0009MSG Standard Error Output File Open Error Message
+const E0009MSG = "E0009:Standard Error Output File %s Open Error!:%v\n"
+
+// E0010MSG Input Output Column Name Format Error Message
+const E0010MSG = "E0010:Input/Output Column Name Format Error:%s.\n"
+
+// E0011MSG No Input Filld Name Error Message
+const E0011MSG = "E0011:No Input Field Name:%s.\n"
+
+// E9999MSG Unexpected Error Message
+const E9999MSG = "E9999:Unexpected Error:%v.\n"
 
 // ErrOutOfIndex スライス(配列)の範囲外へのアクセスを実施した場合
 type ErrOutOfIndex struct {
@@ -74,4 +92,61 @@ type ErrNoHeaderRecord struct {
 
 func (e ErrNoHeaderRecord) Error() string {
 	return fmt.Sprintf(E0006MSG, e.FieldName)
+}
+
+// ErrStdInputFileOpen 標準入力ファイルオープンエラー
+type ErrStdInputFileOpen struct {
+	FileName string
+	Err      error
+}
+
+func (e ErrStdInputFileOpen) Error() string {
+	return fmt.Sprintf(E0007MSG, e.FileName, e.Err)
+}
+
+// ErrStdOutputFileOpen 標準出力ファイルオープンエラー
+type ErrStdOutputFileOpen struct {
+	FileName string
+	Err      error
+}
+
+func (e ErrStdOutputFileOpen) Error() string {
+	return fmt.Sprintf(E0008MSG, e.FileName, e.Err)
+}
+
+// ErrStdErrOutputFileOpen 標準エラー出力ファイルオープンエラー
+type ErrStdErrOutputFileOpen struct {
+	FileName string
+	Err      error
+}
+
+func (e ErrStdErrOutputFileOpen) Error() string {
+	return fmt.Sprintf(E0009MSG, e.FileName, e.Err)
+}
+
+// ErrInputOutputColumNameFormat 標準エラー出力ファイルオープンエラー
+type ErrInputOutputColumNameFormat struct {
+	ColumnName string
+}
+
+func (e ErrInputOutputColumNameFormat) Error() string {
+	return fmt.Sprintf(E0010MSG, e.ColumnName)
+}
+
+// ErrNoInputFieldName 存在しないフィールド名が指定されたときのエラー
+type ErrNoInputFieldName struct {
+	FieldName string
+}
+
+func (e ErrNoInputFieldName) Error() string {
+	return fmt.Sprintf(E0011MSG, e.FieldName)
+}
+
+// ErrUnexpected 予期しないエラー
+type ErrUnexpected struct {
+	Err error
+}
+
+func (e ErrUnexpected) Error() string {
+	return fmt.Sprintf(E9999MSG, e.Err)
 }
