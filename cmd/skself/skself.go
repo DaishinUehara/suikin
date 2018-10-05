@@ -121,7 +121,8 @@ func selfExec(argv []string) error {
 
 	incolumnname, outcolumnname, err = skcmnlib.CammaDivide(selectColumnName)
 	if err != nil {
-		fmt.Fprintf(stderr, "Select Column Arguments Error file=%s: %v\n", os.Args[3], err)
+		fmt.Fprintf(stderr, "Select Column Arguments Error selectColumnName=%v:err=%v\n", selectColumnName, err)
+		return err
 	}
 
 	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)

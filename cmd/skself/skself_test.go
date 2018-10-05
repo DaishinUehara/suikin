@@ -11,6 +11,7 @@ func TestSelExec(t *testing.T) {
 	var argv []string
 	var strStdOut string
 	var strStdErr string
+	var strStdIn string
 
 	argv = make([]string, 0, 4)
 	err = selfExec(argv)
@@ -55,11 +56,25 @@ func TestSelExec(t *testing.T) {
 	argv = append(argv, "-")
 	argv = append(argv, "-")
 	argv = append(argv, "-")
-	strStdOut, strStdErr, err = skstublib.SkStdStub("", argv, func(argv1 []string) error { err1 := selfExec(argv1); return err1 })
-	if err == nil {
-		t.Logf("[OK]:main.selfExec(%v):err=%v,stdout=%v,stderr=%v\n", argv, err, strStdOut, strStdErr)
+	strStdIn = ""
+	strStdOut, strStdErr, err = skstublib.SkStdStub(strStdIn, argv, func(argv1 []string) error { err1 := selfExec(argv1); return err1 })
+	if err == nil && strStdOut == "" && strStdErr == "" {
+		t.Logf("[OK]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
 	} else {
-		t.Errorf("[NG]:main.selfExec(%v):err=%v,stdout=%v,stderr=%v\n", argv, err, strStdOut, strStdErr)
+		t.Errorf("[NG]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
 	}
 
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	argv = append(argv, "項目1")
+	strStdIn = ""
+	strStdOut, strStdErr, err = skstublib.SkStdStub(strStdIn, argv, func(argv1 []string) error { err1 := selfExec(argv1); return err1 })
+	if err != nil && strStdOut == "" && strStdErr == "" {
+		t.Logf("[OK]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
+	} else {
+		t.Errorf("[NG]:main.selfExec(%v):err=%v,stdin=%v,stdout=%v,stderr=%v\n", argv, err, strStdIn, strStdOut, strStdErr)
+	}
 }

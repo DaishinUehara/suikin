@@ -33,7 +33,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 
 	if incolumnlen != outcolumnlen {
 		// 入力と出力が1対1で対応していない場合、エラーとする
-		return skerrlib.ErrInFieldCnt_NE_OutFieldCnt{InFieldCount: incolumnlen, OutFieldCount: outcolumnlen}
+		return skerrlib.ErrInFieldCntNotEqualOutFieldCnt{InFieldCount: incolumnlen, OutFieldCount: outcolumnlen}
 	}
 
 	if incolumnlen == 0 && outcolumnlen == 0 {
@@ -50,7 +50,9 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	if scanner.Scan() {
 		line0 = scanner.Text()
 	} else {
-		return err
+		// 入力フィールドと出力フィールドが指定されているにも関わらず
+		// 1行目(ヘッダ)が読めない場合エラーとする
+		return skerrlib.ErrNoHeaderRecord{}
 	}
 
 	// 1行目をセパレートする
