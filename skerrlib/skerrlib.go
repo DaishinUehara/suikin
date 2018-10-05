@@ -18,7 +18,7 @@ const E0004MSG = "E0004:Input filds count %d is not output fild count %d!\n"
 const E0005MSG = "E0005:Argument Error %v!\n"
 
 // E0006MSG Input Data Header Record Error Message.
-const E0006MSG = "E0006:No Header Record Error!\n"
+const E0006MSG = "E0006:No Header Record Field %v Error!\n"
 
 // ErrOutOfIndex スライス(配列)の範囲外へのアクセスを実施した場合
 type ErrOutOfIndex struct {
@@ -69,8 +69,9 @@ func (e ErrArgument) Error() string {
 
 // ErrNoHeaderRecord ヘッダレコードがない場合
 type ErrNoHeaderRecord struct {
+	FieldName string
 }
 
 func (e ErrNoHeaderRecord) Error() string {
-	return fmt.Sprintf(E0006MSG)
+	return fmt.Sprintf(E0006MSG, e.FieldName)
 }

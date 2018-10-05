@@ -52,7 +52,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	} else {
 		// 入力フィールドと出力フィールドが指定されているにも関わらず
 		// 1行目(ヘッダ)が読めない場合エラーとする
-		return skerrlib.ErrNoHeaderRecord{}
+		return skerrlib.ErrNoHeaderRecord{FieldName: incolumnname[0]}
 	}
 
 	// 1行目をセパレートする
