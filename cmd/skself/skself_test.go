@@ -55,7 +55,7 @@ func TestSelExec(t *testing.T) {
 	argv = append(argv, "-")
 	argv = append(argv, "-")
 	argv = append(argv, "-")
-	strStdOut, strStdErr, err = skstublib.SkStdStub("", argv, func(argv1 []string) { err1 := selfExec(argv1); return err1 })
+	strStdOut, strStdErr, err = skstublib.SkStdStub("", argv, func(argv1 []string) error { err1 := selfExec(argv1); return err1 })
 	if err == nil {
 		t.Logf("[OK]:main.selfExec(%v):err=%v,stdout=%v,stderr=%v\n", argv, err, strStdOut, strStdErr)
 	} else {
