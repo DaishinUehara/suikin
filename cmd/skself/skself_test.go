@@ -2,11 +2,15 @@ package main
 
 import (
 	"testing"
+
+	"github.com/DaishinUehara/suikin/skstublib"
 )
 
 func TestSelExec(t *testing.T) {
 	var err error
 	var argv []string
+	var strStdOut string
+	var strStdErr string
 
 	argv = make([]string, 0, 4)
 	err = selfExec(argv)
@@ -45,4 +49,11 @@ func TestSelExec(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:main.selfExec(%v):err=%v\n", argv, err)
 	}
+
+	argv = make([]string, 0, 4)
+	argv = append(argv, "skself")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	argv = append(argv, "-")
+	strStdOut, strStdErr, err = skstublib.SkStdStub("", func(argv) { err1 := selfExec(argv); return err1 })
 }

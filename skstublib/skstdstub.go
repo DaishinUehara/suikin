@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
-// SkStdStub Stdin Stdout Stderr stub for fn func()
-func SkStdStub(inbuf string, fn func()) (strStdOut string, strStdErr string) {
+// SkStdStub Stdin stdout stderr stub for func().
+func SkStdStub(inbuf string, fn func() error) (strStdOut string, strStdErr string, err error) {
 	inrp, inwp, _ := os.Pipe()   // Input Pipe
 	outrp, outwp, _ := os.Pipe() // Std Output Pipe
 	errrp, errwp, _ := os.Pipe() // Std Error Pipe
@@ -25,7 +25,7 @@ func SkStdStub(inbuf string, fn func()) (strStdOut string, strStdErr string) {
 	os.Stdout = outwp
 	os.Stderr = errwp
 
-	fn() // Execute Function
+	fnerr := fn() // Execute Function
 
 	// restore stdin, stdout and stderr
 	os.Stdin = stdinBak
@@ -44,6 +44,6 @@ func SkStdStub(inbuf string, fn func()) (strStdOut string, strStdErr string) {
 	strStdOut = string(stdOutBuf)
 	strStdErr = string(stdErrBuf)
 
-	return strStdOut, strStdErr
+	return strStdOut, strStdErr, fnerr
 
 }
