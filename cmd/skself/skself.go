@@ -127,7 +127,7 @@ func selfExec(argv []string) error {
 
 	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)
 	if err != nil {
-		fmt.Fprintf(stderr, "Select Field Processing Error file=%s: %v\n", os.Args[3], err)
+		fmt.Fprintf(stderr, "Select Field Processing Error file=%v:err=%v\n", os.Args[3], err)
 	}
 	return err
 }
