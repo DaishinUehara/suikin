@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"os"
 
@@ -43,9 +42,9 @@ func main() {
 	if err != nil {
 		switch err.(type) {
 		case skerrlib.ErrArgument:
+			// TODO エラー処理追加
 			printUsage()
-		default:
-			fmt.Printf("Got unexpected error!\n")
+		case skerrlib.ErrUnexpected:
 		}
 		os.Exit(1)
 	}
