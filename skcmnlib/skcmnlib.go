@@ -143,7 +143,8 @@ func SortByIndex(inputarray []string, index []int) (sortarray []string, err erro
 	inarrsize := len(inputarray)
 	for _, fi := range index {
 		if inarrsize <= fi {
-			err = fmt.Errorf("Out Of Index inputarray[%d]", fi)
+			//			err = fmt.Errorf("Out Of Index inputarray[%d]", fi)
+			err = skerrlib.ErrOutOfIndex{ArrayName: "inputarray", Index: fi}
 			sortarray = make([]string, 0)
 			return sortarray, err
 		}
