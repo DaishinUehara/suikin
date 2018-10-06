@@ -57,16 +57,22 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 
 	// 1行目をセパレートする
 	var headerFields []string
-	headerFields, err = skcmnlib.SeparateField(line0)
+	headerFields, err = skcmnlib.SeparateField(line0) // 本来ならここでerrは返ってこない。
 	if err != nil {
-		return err // TODO 例外による処理分け
+		return skerrlib.ErrUnexpected{Err: err}
+		// return err
 	}
 
 	// fieldをどの順番で出力するかのインデックスを作成する
 	var fieldIndex []int
 	fieldIndex, err = skcmnlib.GetFieldIndexArray(headerFields, incolumnname)
 	if err != nil {
-		return err // TODO 例外による処理分け
+		switch err.(type) {
+		case skerrlib.ErrNoInputFieldName:
+			return err
+		default:
+			return skerrlib.ErrUnexpected{Err: err}
+		}
 	}
 
 	// 1行目(ヘッダ)の出力

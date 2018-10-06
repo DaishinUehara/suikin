@@ -77,7 +77,7 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 		l, err := GetFieldIndex(headerFields, selectFieldName)
 		fieldIndex = append(fieldIndex, l)
 		if err != nil {
-			return fieldIndex, err
+			return fieldIndex, err // TODO エラー処理
 		}
 	}
 	return fieldIndex, nil

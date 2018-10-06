@@ -138,15 +138,19 @@ func selfExec(argv []string) error {
 	if err != nil {
 		switch err.(type) {
 		case skerrlib.ErrNotInitialized:
+			// stdin, stdout, stderr is not initialized.
 			return err
-			// ここから
 		case skerrlib.ErrInFieldCntNotEqualOutFieldCnt:
+			// incolumnname and outcolumnname is not one to one.
 			return err
 		case skerrlib.ErrNoHeaderRecord:
+			// no header record.
 			return err
 		case skerrlib.ErrFlushBuffer:
+			// buffer flush erro.
 			return err
 		default:
+			// unexpected error.
 			return skerrlib.ErrUnexpected{Err: err}
 		}
 	}
