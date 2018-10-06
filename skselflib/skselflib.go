@@ -14,18 +14,15 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 
 	// ここから入力チェック
 	if stdin == nil {
-		//		err = fmt.Errorf("stdin io.Reader not initialized!")
-		return skerrlib.ErrNotInitialized{NoInitializedItem: "stdin io.Reader"}
+		return skerrlib.ErrNotInitialized{PkgMethodName: "skselflib.Exec", NoInitializedItem: "stdin io.Reader"}
 	}
 
 	if stdout == nil {
-		//		err = fmt.Errorf("stdout io.Writer not initialized!")
-		return skerrlib.ErrNotInitialized{NoInitializedItem: "stdout io.Writer"}
+		return skerrlib.ErrNotInitialized{PkgMethodName: "skselflib.Exec", NoInitializedItem: "stdout io.Writer"}
 	}
 
 	if stderr == nil {
-		//		err = fmt.Errorf("stderr io.Writer not initialized!")
-		return skerrlib.ErrNotInitialized{NoInitializedItem: "stderr io.Writer"}
+		return skerrlib.ErrNotInitialized{PkgMethodName: "skselflib.Exec", NoInitializedItem: "stderr io.Writer"}
 	}
 
 	incolumnlen := len(incolumnname)
@@ -33,7 +30,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 
 	if incolumnlen != outcolumnlen {
 		// 入力と出力が1対1で対応していない場合、エラーとする
-		return skerrlib.ErrInFieldCntNotEqualOutFieldCnt{InFieldCount: incolumnlen, OutFieldCount: outcolumnlen}
+		return skerrlib.ErrInFieldCntNotEqualOutFieldCnt{PkgMethodName: "skselflib.Exec", InFieldCount: incolumnlen, OutFieldCount: outcolumnlen}
 	}
 
 	if incolumnlen == 0 && outcolumnlen == 0 {
@@ -52,15 +49,14 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	} else {
 		// 入力フィールドと出力フィールドが指定されているにも関わらず
 		// 1行目(ヘッダ)が読めない場合エラーとする
-		return skerrlib.ErrNoHeaderRecord{FieldName: incolumnname[0]}
+		return skerrlib.ErrNoHeaderRecord{PkgMethodName: "skselflib.Exec", FieldName: incolumnname[0]}
 	}
 
 	// 1行目をセパレートする
 	var headerFields []string
 	headerFields, err = skcmnlib.SeparateField(line0) // 本来ならここでerrは返ってこない。
 	if err != nil {
-		return skerrlib.ErrUnexpected{Err: err}
-		// return err
+		return skerrlib.ErrUnexpected{PkgMethodName: "skselflib.Exec", Err: err}
 	}
 
 	// fieldをどの順番で出力するかのインデックスを作成する
@@ -71,7 +67,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		case skerrlib.ErrNoInputFieldName:
 			return err
 		default:
-			return skerrlib.ErrUnexpected{Err: err}
+			return skerrlib.ErrUnexpected{PkgMethodName: "skselflib.Exec", Err: err}
 		}
 	}
 
@@ -86,8 +82,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		// レコードを読み取りフィールドに分割
 		fields, err1 := skcmnlib.SeparateField(scanner.Text()) // 本来ならここでerrは返ってこない。
 		if err1 != nil {
-			return skerrlib.ErrUnexpected{Err: err1}
-			//return err1
+			return skerrlib.ErrUnexpected{PkgMethodName: "skselflib.Exec", Err: err1}
 		}
 
 		// 分割されたフィールドから出力する文字列の順番に配列に格納
@@ -97,25 +92,25 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 			case skerrlib.ErrOutOfIndex:
 				return err
 			default:
-				return skerrlib.ErrUnexpected{Err: err}
+				return skerrlib.ErrUnexpected{PkgMethodName: "skselflib.Exec", Err: err}
 			}
 		}
 		fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(selfields, " "))
 	}
 
 	if err = scanner.Err(); err != nil {
-		return err // TODO 例外による処理分け
+		return skerrlib.ErrScan{Err: err}
 	}
 
 	// 結果をflushする。
 	err = stdoutBuffer.Flush()
 	if err != nil {
 		fmt.Fprintf(stderrBuffer, "Stdout Flush error: %v\n", err)
-		return skerrlib.ErrFlushBuffer{ErrorItem: "stdoutBuffer"}
+		return skerrlib.ErrFlushBuffer{PkgMethodName: "skselflib.Exec", ErrorItem: "stdoutBuffer"}
 	}
 	err = stderrBuffer.Flush()
 	if err != nil {
-		return skerrlib.ErrFlushBuffer{ErrorItem: "stderrBuffer"}
+		return skerrlib.ErrFlushBuffer{PkgMethodName: "skselflib.Exec", ErrorItem: "stderrBuffer"}
 	}
 
 	return nil

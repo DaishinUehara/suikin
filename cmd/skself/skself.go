@@ -146,8 +146,11 @@ func selfExec(argv []string) error {
 		case skerrlib.ErrNoHeaderRecord:
 			// no header record.
 			return err
+		case skerrlib.ErrScan:
+			// scan error.
+			return err
 		case skerrlib.ErrFlushBuffer:
-			// buffer flush erro.
+			// buffer flush error.
 			return err
 		default:
 			// unexpected error.

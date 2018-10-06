@@ -2,7 +2,6 @@ package skcmnlib
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -31,7 +30,7 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 			outcolumnname = append(outcolumnname, columnarray[1])
 		} else {
 			// err = fmt.Errorf("Input/Output Column Name Format Error: %s", column)
-			return incolumnname, outcolumnname, skerrlib.ErrInputOutputColumNameFormat{ColumnName: column}
+			return incolumnname, outcolumnname, skerrlib.ErrInputOutputColumNameFormat{PkgMethodName: "skcmnlib.CammaDivide", ColumnName: column}
 		}
 	}
 	return incolumnname, outcolumnname, err
@@ -64,7 +63,7 @@ func GetFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err
 	if fieldIndex == -1 {
 		//err = errors.New(fmt.Sprintf("No FieldName: %s", fieldName))
 		// err = fmt.Errorf("No FieldName: %s", fieldName)
-		err = skerrlib.ErrNoInputFieldName{FieldName: fieldName}
+		err = skerrlib.ErrNoInputFieldName{PkgMethodName: "skcmnlib.GetFieldIndex", FieldName: fieldName}
 		return fieldIndex, err
 	}
 	return fieldIndex, nil
@@ -77,7 +76,12 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 		l, err := GetFieldIndex(headerFields, selectFieldName)
 		fieldIndex = append(fieldIndex, l)
 		if err != nil {
-			return fieldIndex, err // TODO エラー処理
+			switch err.(type) {
+			case skerrlib.ErrNoInputFieldName:
+				return fieldIndex, err
+			default:
+				return nil, skerrlib.ErrUnexpected{PkgMethodName: "skcmnlib.GetFieldIndexArray", Err: err}
+			}
 		}
 	}
 	return fieldIndex, nil
@@ -143,8 +147,7 @@ func SortByIndex(inputarray []string, index []int) (sortarray []string, err erro
 	inarrsize := len(inputarray)
 	for _, fi := range index {
 		if inarrsize <= fi {
-			//			err = fmt.Errorf("Out Of Index inputarray[%d]", fi)
-			err = skerrlib.ErrOutOfIndex{ArrayName: "inputarray", Index: fi}
+			err = skerrlib.ErrOutOfIndex{PkgMethodName: "skcmnlib.SortByIndex", ArrayName: "inputarray", Index: fi}
 			sortarray = make([]string, 0)
 			return sortarray, err
 		}
@@ -155,14 +158,14 @@ func SortByIndex(inputarray []string, index []int) (sortarray []string, err erro
 
 ///////////////////////////////
 
-// DateToUnixSec yyyy[mm[dd[HHMMSS]]]をunix時間に直す
+// DateToUnixSec yyyy[mm[dd[hhmiss]]]をunix時間に直す
 func DateToUnixSec(timestr string) (int64, error) {
 	l := len(timestr)
 	layoutBase := "20060102030405"
 	layout := layoutBase[0:l]
 	t1, e1 := time.Parse(layout, timestr)
 	if e1 != nil {
-		return 0, fmt.Errorf("usp.DateToUnixSec: %v", e1)
+		return 0, skerrlib.ErrDateTimeFormat{PkgMethodName: "skcmnlib.DateToUnixSec", DateTimeStr: timestr, Err: e1}
 	}
 	return t1.Unix(), nil
 }
@@ -176,7 +179,7 @@ func TimeToUnixSec(timestr string) (int64, error) {
 	tmptime := topstr + timestr
 	t1, e1 := time.Parse(layoutBase, tmptime)
 	if e1 != nil {
-		return 0, fmt.Errorf("usp.DateToUnixSec: %v", e1)
+		return 0, skerrlib.ErrTimeFormat{PkgMethodName: "skcmnlib.TimeToUnixSec", TimeStr: timestr, Err: e1}
 	}
 	return t1.Unix(), nil
 }
