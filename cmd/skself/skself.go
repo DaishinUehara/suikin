@@ -55,7 +55,7 @@ func main() {
 func selfExec(argv []string) error {
 	arglen := len(argv)
 	if arglen < 4 {
-		return skerrlib.ErrArgument{Argv: argv}
+		return skerrlib.ErrArgument{PkgMethodName: "main.selfExec", Argv: argv}
 	}
 
 	var selectColumnName []string
@@ -81,7 +81,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		infile, err = os.Open(argv[1])
 		if err != nil {
-			return skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err}
+			return skerrlib.ErrStdInputFileOpen{PkgMethodName: "main.selfExec", FileName: argv[1], Err: err}
 			// fmt.Fprintf(os.Stderr, "Input File %s open error: %v\n", argv[1], err)
 		}
 		defer infile.Close() // 関数return時に閉じる
@@ -95,7 +95,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		outfile, err = os.Open(argv[2])
 		if err != nil {
-			return skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err}
+			return skerrlib.ErrStdOutputFileOpen{PkgMethodName: "main.selfExec", FileName: argv[2], Err: err}
 			// fmt.Fprintf(os.Stderr, "Output File %s open error: %v\n", argv[2], err)
 		}
 		defer outfile.Close() // 関数return時に閉じる
@@ -109,7 +109,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		errfile, err = os.Open(os.Args[3])
 		if err != nil {
-			return skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err}
+			return skerrlib.ErrStdErrOutputFileOpen{PkgMethodName: "main.selfExec", FileName: argv[3], Err: err}
 			// fmt.Fprintf(os.Stderr, "Standard Error File %s open error: %v\n", argv[3], err)
 		}
 		defer errfile.Close() // 関数return時に閉じる
@@ -130,7 +130,7 @@ func selfExec(argv []string) error {
 			// return err
 			return err
 		default:
-			return skerrlib.ErrUnexpected{Err: err}
+			return skerrlib.ErrUnexpected{PkgMethodName: "main.selfExec", Err: err}
 		}
 	}
 
@@ -154,7 +154,7 @@ func selfExec(argv []string) error {
 			return err
 		default:
 			// unexpected error.
-			return skerrlib.ErrUnexpected{Err: err}
+			return skerrlib.ErrUnexpected{PkgMethodName: "main.selfExec", Err: err}
 		}
 	}
 	return err

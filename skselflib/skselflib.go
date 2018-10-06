@@ -99,7 +99,7 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	}
 
 	if err = scanner.Err(); err != nil {
-		return skerrlib.ErrScan{Err: err}
+		return skerrlib.ErrScan{PkgMethodName: "skselflib.Exec", Err: err}
 	}
 
 	// 結果をflushする。
