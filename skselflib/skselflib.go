@@ -59,14 +59,14 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 	var headerFields []string
 	headerFields, err = skcmnlib.SeparateField(line0)
 	if err != nil {
-		return err
+		return err // TODO 例外による処理分け
 	}
 
 	// fieldをどの順番で出力するかのインデックスを作成する
 	var fieldIndex []int
 	fieldIndex, err = skcmnlib.GetFieldIndexArray(headerFields, incolumnname)
 	if err != nil {
-		return err
+		return err // TODO 例外による処理分け
 	}
 
 	// 1行目(ヘッダ)の出力
@@ -80,18 +80,18 @@ func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []st
 		// レコードを読み取りフィールドに分割
 		fields, err1 := skcmnlib.SeparateField(scanner.Text())
 		if err1 != nil {
-			return err1
+			return err1 // TODO 例外による処理分け
 		}
 
 		// 分割されたフィールドから出力する文字列の順番に配列に格納
 		selfields, err = skcmnlib.SortByIndex(fields, fieldIndex)
 		if err != nil {
-			return err
+			return err // TODO 例外による処理分け
 		}
 		fmt.Fprintln(stdoutBuffer, skcmnlib.ConnectFields(selfields, " "))
 	}
 	if err = scanner.Err(); err != nil {
-		return err
+		return err // TODO 例外による処理分け
 	}
 
 	// 結果をflushする。

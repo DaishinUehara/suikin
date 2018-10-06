@@ -136,7 +136,19 @@ func selfExec(argv []string) error {
 
 	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)
 	if err != nil {
-		fmt.Fprintf(stderr, "Select Field Processing Error file=%v:err=%v\n", argv[3], err)
+		switch err.(type) {
+		case skerrlib.ErrNotInitialized:
+			return err
+			// ここから
+		case skerrlib.ErrInFieldCntNotEqualOutFieldCnt:
+			return err
+		case skerrlib.ErrNoHeaderRecord:
+			return err
+		case skerrlib.ErrFlushBuffer:
+			return err
+		default:
+			return skerrlib.ErrUnexpected{Err: err}
+		}
 	}
 	return err
 }
