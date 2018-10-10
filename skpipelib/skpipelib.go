@@ -13,63 +13,72 @@ type SkExecIf interface {
 	Exec(io.Reader, io.Writer, io.Writer, []string, []string) error
 }
 
-// SkPipeIf Pipeへのアクセスインターフェース
-type SkPipeIf interface {
-	//	GetStdin() (io.Writer, error)
+// SkMultiIf Pipeへのアクセスインターフェース
+type SkMultiIf interface {
 	AddExec(SkExecIf) error
-	//	GetStdout() io.Reader
-	//	GetStderr() io.Reader
-	PipeExec(io.Reader, io.Writer, io.Writer) error
+	MultiExec(io.Reader, io.Writer, io.Writer) []error
 }
 
-// SkPipe is Struct of SkPipeIf
-type SkPipe struct {
-	skExecAr           []SkExecIf
-	skPipeErrReaderArr []*io.PipeReader
-	infieldArr         [][]string
-	outfieldArr        [][]string
+// SkMulti is Struct of SkMultiIf
+type SkMulti struct {
+	// SkExecを格納した配列
+	skExecAr []SkExecIf
+
+	// 入力フィールド用の配列
+	infieldArr [][]string
+
+	// 出力フィールド用の配列
+	outfieldArr [][]string
 }
 
 // AddExec pipeで実行する処理を追加する
-func (sp SkPipe) AddExec(skexec SkExecIf, infield []string, outfield []string) {
+func (sp SkMulti) AddExec(skexec SkExecIf, infield []string, outfield []string) {
 	if sp.skExecAr == nil {
 		sp.skExecAr = make([]SkExecIf, 0, 5)
 		sp.infieldArr = make([][]string, 0, 5)
 		sp.outfieldArr = make([][]string, 0, 5)
 	}
 	sp.skExecAr = append(sp.skExecAr, skexec)
+	sp.skExecAr = sp.skExecAr[:cap(sp.skExecAr)]
 	sp.infieldArr = append(sp.infieldArr, infield)
+	sp.infieldArr = sp.infieldArr[:cap(sp.infieldArr)]
 	sp.outfieldArr = append(sp.outfieldArr, outfield)
+	sp.outfieldArr = sp.outfieldArr[:cap(sp.outfieldArr)]
 
 }
 
-// PipeExec PipeExec make go channel and execute skexec
-func (sp SkPipe) PipeExec(iosr io.Reader, ioso io.Writer, iose io.Writer) (err error) {
+// MultiExec PipeExec make go channel and execute skexec
+func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []error {
 
 	var (
 		pipeReader    *io.PipeReader
 		pipeWriter    *io.PipeWriter
 		pipeErrReader *io.PipeReader
 		pipeErrWriter *io.PipeWriter
+		errAr         []error
 	)
 
 	errWriteBuffer := bufio.NewWriter(iose)
 	stdWriteBuffer := bufio.NewWriter(ioso)
 
-	pipeReaderArr := make([]*io.PipeReader, 0, 5)
-	pipeWriterArr := make([]*io.PipeWriter, 0, 5)
+	ln := len(sp.skExecAr)
+
+	pipeReaderArr := make([]*io.PipeReader, 0, ln)
+	pipeWriterArr := make([]*io.PipeWriter, 0, ln)
 
 	fmt.Printf("%v", pipeReaderArr)
 
-	pipeErrReaderArr := make([]*io.PipeReader, 0, 5)
-	pipeErrWriterArr := make([]*io.PipeWriter, 0, 5)
+	// 実体が変わらないようあらかじめサイズ指定して確保
+	pipeErrReaderArr := make([]*io.PipeReader, 0, ln)
+	pipeErrWriterArr := make([]*io.PipeWriter, 0, ln)
+
+	errAr = make([]error, 0, ln)
 
 	for i, skexec := range sp.skExecAr {
 
 		// Pipe for Stdion Stdout
 		pipeReader, pipeWriter = io.Pipe()
 		pipeReaderArr = append(pipeReaderArr, pipeReader)
-		sp.skPipeErrReaderArr = pipeErrReaderArr // append時実体が変わる可能性があるため再代入
 		pipeWriterArr = append(pipeWriterArr, pipeWriter)
 
 		// Pipe for Error
@@ -82,9 +91,11 @@ func (sp SkPipe) PipeExec(iosr io.Reader, ioso io.Writer, iose io.Writer) (err e
 
 		go func() {
 			if goi == 0 {
-				goexe.Exec(iosr, pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				err := goexe.Exec(iosr, pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				errAr = append(errAr, err)
 			} else {
-				goexe.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				err := goexe.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				errAr = append(errAr, err)
 			}
 			pipeWriter.Close()
 			pipeErrWriter.Close()
@@ -112,5 +123,6 @@ func (sp SkPipe) PipeExec(iosr io.Reader, ioso io.Writer, iose io.Writer) (err e
 		}
 
 	}
-	return err
+	errAr = errAr[:cap(errAr)]
+	return errAr
 }
