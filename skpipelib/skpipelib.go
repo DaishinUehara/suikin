@@ -56,6 +56,8 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 		pipeErrReader *io.PipeReader
 		pipeErrWriter *io.PipeWriter
 		errAr         []error
+		goi           int
+		goexe         SkExecIf
 	)
 
 	errWriteBuffer := bufio.NewWriter(iose)
@@ -86,8 +88,8 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 		pipeErrReaderArr = append(pipeErrReaderArr, pipeErrReader)
 		pipeErrWriterArr = append(pipeErrWriterArr, pipeErrWriter)
 
-		goexe := skexec
-		goi := i
+		goexe = skexec
+		goi = i
 
 		go func() {
 			if goi == 0 {

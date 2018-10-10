@@ -10,6 +10,7 @@ import (
 	"github.com/DaishinUehara/suikin/skpipelib"
 )
 
+// Exe1 テスト用のスタブ
 type Exe1 struct {
 }
 
