@@ -102,14 +102,18 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		pipeErrReaderArr = append(pipeErrReaderArr, pipeErrReader)
 		pipeErrWriterArr = append(pipeErrWriterArr, pipeErrWriter)
 
-		goi = i           // goルーチンに格納するため、ループ変数から代入
-		goinfo = execinfo // goルーチンに格納するため、ループ変数から代入
+		// Folow lines plug given loop values for the valiable to use go-routine
+		goi = i
+		goinfo = execinfo
 
 		go func() {
+			// Executer Connection Pipe Line
 			if goi == 0 {
+				// Execute Read From I/O Reader At First
 				err := goinfo.skexec.Exec(iosr, pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
 				errAr = append(errAr, err)
 			} else {
+				// Execute Read From Before Execute Pipe.
 				err := goinfo.skexec.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
 				errAr = append(errAr, err)
 			}
@@ -118,6 +122,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		}()
 
 		go func() {
+			// This Go Routine Read Error From Last Execute And Write Buffer.
 			sc := bufio.NewScanner(pipeErrReader)
 			for sc.Scan() {
 				errWriteBuffer.Write(sc.Bytes())
@@ -127,7 +132,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		}()
 
 		if goi == execlen-1 {
-			// 最後の場合、パイプからバッファに出力
+			// This Go Routine Read Standard Output from Last Execute And Write Buffer.
 			go func() {
 				sc := bufio.NewScanner(pipeReader)
 				for sc.Scan() {
