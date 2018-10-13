@@ -28,9 +28,10 @@ func TestAddExec(t *testing.T) {
 	stdout1 := new(bytes.Buffer)
 	stderr1 := new(bytes.Buffer)
 
-	errAr1 := pe.MultiExec(stdin1, stdout1, stderr1)
+	errAr1, err1 := pe.MultiExec(stdin1, stdout1, stderr1)
 	if 1 == len(errAr1) &&
 		errAr1[0] == nil &&
+		err1 == nil &&
 		stdout1.String() == "" &&
 		stderr1.String() == "" {
 		t.Logf("[OK]:skselflib.MultiExec(%v,%v,%v,%v,%v):errAr1=%v,len(errAr1)=%d\n", stdin1, stdout1, stderr1, infield1, infield1, errAr1, len(errAr1))

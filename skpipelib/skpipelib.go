@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+
+	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
 // TODO 諸々
@@ -15,40 +17,45 @@ type SkExecIf interface {
 
 // SkMultiIf Pipeへのアクセスインターフェース
 type SkMultiIf interface {
-	AddExec(SkExecIf) error
-	MultiExec(io.Reader, io.Writer, io.Writer) []error
+	AddExec(SkExecIf, []string, []string)
+	MultiExec(io.Reader, io.Writer, io.Writer) ([]error, error)
+}
+
+// SkExecInfo SkMultiの実行に必要な構造体を作成
+type SkExecInfo struct {
+	skexec   SkExecIf
+	infield  []string
+	outfield []string
 }
 
 // SkMulti is Struct of SkMultiIf
 type SkMulti struct {
-	// SkExecを格納した配列
-	skExecAr []SkExecIf
-
-	// 入力フィールド用の配列
-	infieldArr [][]string
-
-	// 出力フィールド用の配列
-	outfieldArr [][]string
+	pSkExecInfoArr *([]SkExecInfo)
 }
 
 // AddExec pipeで実行する処理を追加する
-func (sp SkMulti) AddExec(skexec SkExecIf, infield []string, outfield []string) {
-	if sp.skExecAr == nil {
-		sp.skExecAr = make([]SkExecIf, 0, 5)
-		sp.infieldArr = make([][]string, 0, 5)
-		sp.outfieldArr = make([][]string, 0, 5)
+func (sp *SkMulti) AddExec(skexec SkExecIf, infield []string, outfield []string) {
+	var (
+		skexecinfoarr []SkExecInfo
+		pskeinfo      *SkExecInfo
+	)
+	if sp.pSkExecInfoArr == nil {
+		skexecinfoarr = make([]SkExecInfo, 0, 5)
+		sp.pSkExecInfoArr = &skexecinfoarr
+	} else {
+		skexecinfoarr = *sp.pSkExecInfoArr
 	}
-	sp.skExecAr = append(sp.skExecAr, skexec)
-	sp.skExecAr = sp.skExecAr[:cap(sp.skExecAr)]
-	sp.infieldArr = append(sp.infieldArr, infield)
-	sp.infieldArr = sp.infieldArr[:cap(sp.infieldArr)]
-	sp.outfieldArr = append(sp.outfieldArr, outfield)
-	sp.outfieldArr = sp.outfieldArr[:cap(sp.outfieldArr)]
+	pskeinfo = new(SkExecInfo)
+	pskeinfo.skexec = skexec
+	pskeinfo.infield = infield
+	pskeinfo.outfield = outfield
+	skexecinfoarr = append(skexecinfoarr, *pskeinfo)
+	sp.pSkExecInfoArr = &skexecinfoarr
 
 }
 
 // MultiExec PipeExec make go channel and execute skexec
-func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []error {
+func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]error, error) {
 
 	var (
 		pipeReader    *io.PipeReader
@@ -57,26 +64,33 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 		pipeErrWriter *io.PipeWriter
 		errAr         []error
 		goi           int
-		goexe         SkExecIf
+		execlen       int
+		skexecinfoar  []SkExecInfo
+		goinfo        SkExecInfo
 	)
 
 	errWriteBuffer := bufio.NewWriter(iose)
 	stdWriteBuffer := bufio.NewWriter(ioso)
 
-	ln := len(sp.skExecAr)
+	if sp.pSkExecInfoArr != nil {
+		skexecinfoar = *sp.pSkExecInfoArr
+		execlen = len(skexecinfoar)
+	} else {
+		return errAr, skerrlib.ErrNotInitialized{PkgMethodName: "skpipelib.MultiExec", NoInitializedItem: "sp.pSkExecInfoArr"}
+	}
 
-	pipeReaderArr := make([]*io.PipeReader, 0, ln)
-	pipeWriterArr := make([]*io.PipeWriter, 0, ln)
+	pipeReaderArr := make([]*io.PipeReader, 0, execlen)
+	pipeWriterArr := make([]*io.PipeWriter, 0, execlen)
 
 	fmt.Printf("%v", pipeReaderArr)
 
 	// 実体が変わらないようあらかじめサイズ指定して確保
-	pipeErrReaderArr := make([]*io.PipeReader, 0, ln)
-	pipeErrWriterArr := make([]*io.PipeWriter, 0, ln)
+	pipeErrReaderArr := make([]*io.PipeReader, 0, execlen)
+	pipeErrWriterArr := make([]*io.PipeWriter, 0, execlen)
 
-	errAr = make([]error, 0, ln)
+	errAr = make([]error, 0, execlen)
 
-	for i, skexec := range sp.skExecAr {
+	for i, execinfo := range skexecinfoar {
 
 		// Pipe for Stdion Stdout
 		pipeReader, pipeWriter = io.Pipe()
@@ -88,15 +102,15 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 		pipeErrReaderArr = append(pipeErrReaderArr, pipeErrReader)
 		pipeErrWriterArr = append(pipeErrWriterArr, pipeErrWriter)
 
-		goexe = skexec
-		goi = i
+		goi = i           // goルーチンに格納するため、ループ変数から代入
+		goinfo = execinfo // goルーチンに格納するため、ループ変数から代入
 
 		go func() {
 			if goi == 0 {
-				err := goexe.Exec(iosr, pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				err := goinfo.skexec.Exec(iosr, pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
 				errAr = append(errAr, err)
 			} else {
-				err := goexe.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, sp.infieldArr[goi], sp.outfieldArr[goi])
+				err := goinfo.skexec.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
 				errAr = append(errAr, err)
 			}
 			pipeWriter.Close()
@@ -112,7 +126,7 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 			errWriteBuffer.Flush()
 		}()
 
-		if goi == len(sp.skExecAr)-1 {
+		if goi == execlen-1 {
 			// 最後の場合、パイプからバッファに出力
 			go func() {
 				sc := bufio.NewScanner(pipeReader)
@@ -126,5 +140,5 @@ func (sp SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) []er
 
 	}
 	errAr = errAr[:cap(errAr)]
-	return errAr
+	return errAr, nil
 }
