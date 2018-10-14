@@ -9,8 +9,12 @@ import (
 	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
+// SkSelf is
+type SkSelf struct {
+}
+
 // Exec はselfを実行する
-func Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []string, outcolumnname []string) (err error) {
+func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []string, outcolumnname []string) (err error) {
 
 	// ここから入力チェック
 	if stdin == nil {

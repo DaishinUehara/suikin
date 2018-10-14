@@ -2,7 +2,6 @@ package skpipelib
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 
 	"github.com/DaishinUehara/suikin/skerrlib"
@@ -82,7 +81,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 	pipeReaderArr := make([]*io.PipeReader, 0, execlen)
 	pipeWriterArr := make([]*io.PipeWriter, 0, execlen)
 
-	fmt.Printf("%v", pipeReaderArr)
+	// fmt.Printf("%v", pipeReaderArr)
 
 	// 実体が変わらないようあらかじめサイズ指定して確保
 	pipeErrReaderArr := make([]*io.PipeReader, 0, execlen)
