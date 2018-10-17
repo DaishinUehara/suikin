@@ -125,24 +125,23 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 			sc := bufio.NewScanner(pipeErrReader)
 			for sc.Scan() {
 				errWriteBuffer.Write(sc.Bytes())
+				errWriteBuffer.WriteString("\n")
 			}
 			pipeErrReader.Close()
 			errWriteBuffer.Flush()
 		}()
 
-		if goi == execlen-1 {
-			// This Go Routine Read Standard Output from Last Execute And Write Buffer.
-			go func() {
-				sc := bufio.NewScanner(pipeReader)
-				for sc.Scan() {
-					stdWriteBuffer.Write(sc.Bytes())
-				}
-				pipeReader.Close()
-				stdWriteBuffer.Flush()
-			}()
-		}
-
 	}
+
+	// This Go Routine Read Standard Output from Last Execute And Write Buffer.
+	sc := bufio.NewScanner(pipeReaderArr[execlen-1])
+	for sc.Scan() {
+		stdWriteBuffer.Write(sc.Bytes())
+		stdWriteBuffer.WriteString("\n")
+	}
+	pipeReader.Close()
+	stdWriteBuffer.Flush()
+
 	errAr = errAr[:cap(errAr)]
 	return errAr, nil
 }

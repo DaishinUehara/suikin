@@ -108,7 +108,9 @@ func TestAddExec(t *testing.T) {
 	stderr3 = new(bytes.Buffer)
 
 	errAr3, err3 := pe3.MultiExec(stdin3, stdout3, stderr3)
-	if err3 == nil {
+	strStdOut3 := stdout3.String()
+	strStdErr3 := stderr3.String()
+	if err3 == nil && strStdOut3 == "a c\n1 3\n4 6\n7 9\n" && strStdErr3 == "" {
 		t.Logf("[OK]:skselflib.MultiExec(%v,%v,%v):infield3=%v,outfield3=%v,errAr3=%v,len(errAr3)=%d,err3=%v\n", stdin3, stdout3, stderr3, infield3, outfield3, errAr3, len(errAr3), err3)
 
 		scannerout3 = bufio.NewScanner(stdout3)
