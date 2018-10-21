@@ -146,16 +146,14 @@ func TestAddExec(t *testing.T) {
 		scannererr4 *bufio.Scanner
 	)
 
-	exe40 = new(skselflib.SkSelf) // メソッド実行する構造体1
-	exe41 = new(skselflib.SkSelf) // メソッド実行する構造体2
-	pe4 = new(skpipelib.SkMulti)  // 実行パイプ
+	pe4 = new(skpipelib.SkMulti) // 実行パイプ
 	infield40 = make([]string, 0, 5)
 	infield40 = append(infield40, "項目1")
 	infield40 = append(infield40, "項目3")
 	outfield40 = make([]string, 0, 5)
 	outfield40 = append(outfield40, "a")
 	outfield40 = append(outfield40, "c")
-	pe4.AddExec(exe40, infield40, outfield40) // パイプに実行構造体を追加
+
 	infield41 = make([]string, 0, 5)
 	infield41 = append(infield41, "c")
 	infield41 = append(infield41, "a")
@@ -164,7 +162,13 @@ func TestAddExec(t *testing.T) {
 	outfield41 = append(outfield41, "C")
 	outfield41 = append(outfield41, "A")
 	outfield41 = append(outfield41, "C")
-	pe4.AddExec(exe41, infield41, outfield41)
+
+	exe40 = new(skselflib.SkSelf)             // メソッド実行する構造体1
+	pe4.AddExec(exe40, infield40, outfield40) // パイプに実行構造体を追加
+
+	exe41 = new(skselflib.SkSelf)             // メソッド実行する構造体2
+	pe4.AddExec(exe41, infield41, outfield41) // パイプに実行構造体を追加
+
 	stdin4 = bytes.NewBufferString("項目1 項目2 項目3\n1 2 3\n4 5 6\n7 8 9")
 	stdout4 = new(bytes.Buffer)
 	stderr4 = new(bytes.Buffer)
@@ -180,7 +184,7 @@ func TestAddExec(t *testing.T) {
 		t.Logf("stdout4=")
 		for scannerout4.Scan() {
 			line3 = scannerout4.Text()
-			t.Logf("%s\n", line4)
+			t.Logf("%s\n", line3)
 		}
 
 		scannererr4 = bufio.NewScanner(stderr4)
@@ -193,7 +197,6 @@ func TestAddExec(t *testing.T) {
 	} else {
 		t.Errorf("[NG]:skselflib.MultiExec(%v,%v,%v):infield40=%v,outfield40=%v,errAr4=%v,len(errAr4)=%d,err4=%v\n", stdin4, stdout4, stderr4, infield40, outfield40, errAr4, len(errAr4), err4)
 	}
-
 }
 
 func TestPipeExec(t *testing.T) {

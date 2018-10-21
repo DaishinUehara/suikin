@@ -62,10 +62,8 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		pipeErrReader *io.PipeReader
 		pipeErrWriter *io.PipeWriter
 		errAr         []error
-		goi           int
 		execlen       int
 		skexecinfoar  []SkExecInfo
-		goinfo        SkExecInfo
 	)
 
 	errWriteBuffer := bufio.NewWriter(iose)
@@ -80,8 +78,6 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 
 	pipeReaderArr := make([]*io.PipeReader, 0, execlen)
 	pipeWriterArr := make([]*io.PipeWriter, 0, execlen)
-
-	// fmt.Printf("%v", pipeReaderArr)
 
 	// 実体が変わらないようあらかじめサイズ指定して確保
 	pipeErrReaderArr := make([]*io.PipeReader, 0, execlen)
@@ -102,34 +98,32 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		pipeErrWriterArr = append(pipeErrWriterArr, pipeErrWriter)
 
 		// Folow lines plug given loop values for the valiable to use go-routine
-		goi = i
-		goinfo = execinfo
-
-		go func() {
-			// Executer Connection Pipe Line
-			if goi == 0 {
-				// Execute Read From I/O Reader At First
-				err := goinfo.skexec.Exec(iosr, pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
+		if i == 0 {
+			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
+				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
 				errAr = append(errAr, err)
-			} else {
-				// Execute Read From Before Execute Pipe.
-				err := goinfo.skexec.Exec(pipeReaderArr[goi-1], pipeWriter, pipeErrWriter, goinfo.infield, goinfo.outfield)
+				iw.Close()
+				ier.Close()
+			}(iosr, pipeWriter, pipeErrWriter, execinfo)
+		} else {
+			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
+				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
 				errAr = append(errAr, err)
-			}
-			pipeWriter.Close()
-			pipeErrWriter.Close()
-		}()
+				iw.Close()
+				ier.Close()
+			}(pipeReaderArr[i-1], pipeWriter, pipeErrWriter, execinfo)
 
-		go func() {
+		}
+		go func(pErrR *io.PipeReader, errW *bufio.Writer) {
 			// This Go Routine Read Error From Last Execute And Write Buffer.
-			sc := bufio.NewScanner(pipeErrReader)
+			sc := bufio.NewScanner(pErrR)
 			for sc.Scan() {
-				errWriteBuffer.Write(sc.Bytes())
-				errWriteBuffer.WriteString("\n")
+				errW.Write(sc.Bytes())
+				errW.WriteString("\n")
 			}
-			pipeErrReader.Close()
-			errWriteBuffer.Flush()
-		}()
+			pErrR.Close()
+			errW.Flush()
+		}(pipeErrReader, errWriteBuffer)
 
 	}
 
