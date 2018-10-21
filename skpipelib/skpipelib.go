@@ -3,6 +3,7 @@ package skpipelib
 import (
 	"bufio"
 	"io"
+	"sync"
 
 	"github.com/DaishinUehara/suikin/skerrlib"
 )
@@ -64,6 +65,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		errAr         []error
 		execlen       int
 		skexecinfoar  []SkExecInfo
+		wg            sync.WaitGroup
 	)
 
 	errWriteBuffer := bufio.NewWriter(iose)
@@ -99,21 +101,26 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 
 		// Folow lines plug given loop values for the valiable to use go-routine
 		if i == 0 {
+			wg.Add(1)
 			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
 				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
 				errAr = append(errAr, err)
 				iw.Close()
 				ier.Close()
+				wg.Done()
 			}(iosr, pipeWriter, pipeErrWriter, execinfo)
 		} else {
+			wg.Add(1)
 			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
 				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
 				errAr = append(errAr, err)
 				iw.Close()
 				ier.Close()
+				wg.Done()
 			}(pipeReaderArr[i-1], pipeWriter, pipeErrWriter, execinfo)
 
 		}
+		wg.Add(1)
 		go func(pErrR *io.PipeReader, errW *bufio.Writer) {
 			// This Go Routine Read Error From Last Execute And Write Buffer.
 			sc := bufio.NewScanner(pErrR)
@@ -123,6 +130,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 			}
 			pErrR.Close()
 			errW.Flush()
+			wg.Done()
 		}(pipeErrReader, errWriteBuffer)
 
 	}
@@ -137,5 +145,6 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 	stdWriteBuffer.Flush()
 
 	errAr = errAr[:cap(errAr)]
+	wg.Wait()
 	return errAr, nil
 }
