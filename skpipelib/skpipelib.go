@@ -12,7 +12,7 @@ import (
 
 // SkExecIf Pipeの実行対象となるインターフェース
 type SkExecIf interface {
-	Exec(io.Reader, io.Writer, io.Writer, []string, []string) error
+	Exec(io.Reader, io.Writer, io.Writer) error
 }
 
 // SkMultiIf Pipeへのアクセスインターフェース
@@ -22,34 +22,33 @@ type SkMultiIf interface {
 }
 
 // SkExecInfo SkMultiの実行に必要な構造体を作成
-type SkExecInfo struct {
-	skexec   SkExecIf
-	infield  []string
-	outfield []string
-}
+//type SkExecInfo struct {
+//	skexec   SkExecIf
+//	infield  []string
+//	outfield []string
+//}
 
 // SkMulti is Struct of SkMultiIf
 type SkMulti struct {
-	pSkExecInfoArr *([]SkExecInfo)
+	pSkExecInfoArr *([]SkExecIf)
 }
 
 // AddExec pipeで実行する処理を追加する
-func (sp *SkMulti) AddExec(skexec SkExecIf, infield []string, outfield []string) {
+func (sp *SkMulti) AddExec(skexec SkExecIf) {
 	var (
-		skexecinfoarr []SkExecInfo
-		pskeinfo      *SkExecInfo
+		skexecinfoarr []SkExecIf
 	)
 	if sp.pSkExecInfoArr == nil {
-		skexecinfoarr = make([]SkExecInfo, 0, 5)
+		skexecinfoarr = make([]SkExecIf, 0, 5)
 		sp.pSkExecInfoArr = &skexecinfoarr
 	} else {
 		skexecinfoarr = *sp.pSkExecInfoArr
 	}
-	pskeinfo = new(SkExecInfo)
-	pskeinfo.skexec = skexec
-	pskeinfo.infield = infield
-	pskeinfo.outfield = outfield
-	skexecinfoarr = append(skexecinfoarr, *pskeinfo)
+	//pskeinfo = new(SkExecInfo)
+	//pskeinfo.skexec = skexec
+	//pskeinfo.infield = infield
+	//pskeinfo.outfield = outfield
+	skexecinfoarr = append(skexecinfoarr, skexec)
 	sp.pSkExecInfoArr = &skexecinfoarr
 
 }
@@ -64,7 +63,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		pipeErrWriter *io.PipeWriter
 		errAr         []error
 		execlen       int
-		skexecinfoar  []SkExecInfo
+		skexecinfoar  []SkExecIf
 		wg            sync.WaitGroup
 	)
 
@@ -102,8 +101,11 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		// Folow lines plug given loop values for the valiable to use go-routine
 		if i == 0 {
 			wg.Add(1)
-			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
-				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
+			//			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
+			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, skexec SkExecIf) {
+				// err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
+				// err := ginfo.skexec.Exec(ir, iw, ier)
+				err := skexec.Exec(ir, iw, ier)
 				errAr = append(errAr, err)
 				iw.Close()
 				ier.Close()
@@ -111,8 +113,10 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 			}(iosr, pipeWriter, pipeErrWriter, execinfo)
 		} else {
 			wg.Add(1)
-			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
-				err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
+			// go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter) {
+			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, skexec SkExecIf) {
+				//err := ginfo.skexec.Exec(ir, iw, ier)
+				err := skexec.Exec(ir, iw, ier)
 				errAr = append(errAr, err)
 				iw.Close()
 				ier.Close()

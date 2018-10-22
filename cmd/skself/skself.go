@@ -118,10 +118,11 @@ func selfExec(argv []string) error {
 		stderr = bufio.NewWriter(os.Stderr)
 	}
 
-	var incolumnname []string
-	var outcolumnname []string
+	// var incolumnname []string
+	// var outcolumnname []string
+	var skself = new(skselflib.SkSelf)
 
-	incolumnname, outcolumnname, err = skcmnlib.CammaDivide(selectColumnName)
+	skself.InColumnName, skself.OutColumName, err = skcmnlib.CammaDivide(selectColumnName)
 	if err != nil {
 		switch err.(type) {
 		case skerrlib.ErrInputOutputColumNameFormat:
@@ -133,7 +134,7 @@ func selfExec(argv []string) error {
 		}
 	}
 
-	err = skselflib.Exec(stdin, stdout, stderr, incolumnname, outcolumnname)
+	err = skself.Exec(stdin, stdout, stderr)
 	if err != nil {
 		switch err.(type) {
 		case skerrlib.ErrNotInitialized:

@@ -11,10 +11,12 @@ import (
 
 // SkSelf is
 type SkSelf struct {
+	InColumnName []string
+	OutColumName []string
 }
 
 // Exec はselfを実行する
-func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, incolumnname []string, outcolumnname []string) (err error) {
+func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer) (err error) {
 
 	// ここから入力チェック
 	if stdin == nil {
@@ -29,8 +31,8 @@ func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, inco
 		return skerrlib.ErrNotInitialized{PkgMethodName: "skselflib.Exec", NoInitializedItem: "stderr io.Writer"}
 	}
 
-	incolumnlen := len(incolumnname)
-	outcolumnlen := len(outcolumnname)
+	incolumnlen := len(ss.InColumnName)
+	outcolumnlen := len(ss.OutColumName)
 
 	if incolumnlen != outcolumnlen {
 		// 入力と出力が1対1で対応していない場合、エラーとする
@@ -53,7 +55,7 @@ func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, inco
 	} else {
 		// 入力フィールドと出力フィールドが指定されているにも関わらず
 		// 1行目(ヘッダ)が読めない場合エラーとする
-		return skerrlib.ErrNoHeaderRecord{PkgMethodName: "skselflib.Exec", FieldName: incolumnname[0]}
+		return skerrlib.ErrNoHeaderRecord{PkgMethodName: "skselflib.Exec", FieldName: ss.InColumnName[0]}
 	}
 
 	// 1行目をセパレートする
@@ -65,7 +67,7 @@ func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, inco
 
 	// fieldをどの順番で出力するかのインデックスを作成する
 	var fieldIndex []int
-	fieldIndex, err = skcmnlib.GetFieldIndexArray(headerFields, incolumnname)
+	fieldIndex, err = skcmnlib.GetFieldIndexArray(headerFields, ss.InColumnName)
 	if err != nil {
 		switch err.(type) {
 		case skerrlib.ErrNoInputFieldName:
@@ -76,7 +78,7 @@ func (ss *SkSelf) Exec(stdin io.Reader, stdout io.Writer, stderr io.Writer, inco
 	}
 
 	// 1行目(ヘッダ)の出力
-	headerstr := skcmnlib.ConnectFields(outcolumnname, " ")
+	headerstr := skcmnlib.ConnectFields(ss.OutColumName, " ")
 	if len(headerstr) > 0 {
 		fmt.Fprintln(stdoutBuffer, headerstr)
 	}
