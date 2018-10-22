@@ -38,7 +38,7 @@ func (ex3 *Exe3) Exec(io.Reader, io.Writer, io.Writer) error {
 	return nil
 }
 
-func TestAddExec(t *testing.T) {
+func TestMultiExec(t *testing.T) {
 	exe1 := new(Exe1)
 	pe1 := new(skpipelib.SkMulti)
 	infield1 := make([]string, 0, 5)
