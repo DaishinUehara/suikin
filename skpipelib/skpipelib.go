@@ -101,10 +101,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		// Folow lines plug given loop values for the valiable to use go-routine
 		if i == 0 {
 			wg.Add(1)
-			//			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, ginfo SkExecInfo) {
 			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, skexec SkExecIf) {
-				// err := ginfo.skexec.Exec(ir, iw, ier, ginfo.infield, ginfo.outfield)
-				// err := ginfo.skexec.Exec(ir, iw, ier)
 				err := skexec.Exec(ir, iw, ier)
 				errAr = append(errAr, err)
 				iw.Close()
@@ -113,9 +110,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 			}(iosr, pipeWriter, pipeErrWriter, execinfo)
 		} else {
 			wg.Add(1)
-			// go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter) {
 			go func(ir io.Reader, iw *io.PipeWriter, ier *io.PipeWriter, skexec SkExecIf) {
-				//err := ginfo.skexec.Exec(ir, iw, ier)
 				err := skexec.Exec(ir, iw, ier)
 				errAr = append(errAr, err)
 				iw.Close()
