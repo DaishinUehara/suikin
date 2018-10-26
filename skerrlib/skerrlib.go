@@ -3,203 +3,204 @@ package skerrlib
 import "fmt"
 
 // E0001MSG Out of Index Error Message.
-const E0001MSG = "E0001:%s:%s[%d] is Out of Index.\n"
+const E0001MSG = "E0001:%s[%d] is Out of Index.\n%s\n"
 
 // E0002MSG Not Initialized Error Message.
-const E0002MSG = "E0002:%s:%s is not initialized!\n"
+const E0002MSG = "E0002:%s is not initialized!\n%s\n"
 
 // E0003MSG Buffer flush Error Message.
-const E0003MSG = "E0003:%s:Buffer %s flush Error!\n"
+const E0003MSG = "E0003:Buffer %s flush Error!\n%s\n"
 
 // E0004MSG Input Field Number is not Output Field Number Error Message.
-const E0004MSG = "E0004:%s:Input filds count %d is not output fild count %d!\n"
+const E0004MSG = "E0004:Input filds count %d is not output fild count %d!\n%s\n"
 
 // E0005MSG Argument Error Message.
-const E0005MSG = "E0005:%s:Argument Error %v!\n"
+const E0005MSG = "E0005:Argument Error %v!\n%s\n"
 
 // E0006MSG Input Data Header Record Error Message.
-const E0006MSG = "E0006:%s:No Header Record Field %s Error!\n"
+const E0006MSG = "E0006:No Header Record Field %s Error!\n%s\n"
 
 // E0007MSG Standard Input File Open Error Message
-const E0007MSG = "E0007:%s:Standard Input File %s Open Error!:%v\n"
+const E0007MSG = "E0007:Standard Input File %s Open Error!:%v\n%s\n"
 
 // E0008MSG Standard Output File Open Error Message
-const E0008MSG = "E0008:%s:Standard Output File %s Open Error!:%v\n"
+const E0008MSG = "E0008:Standard Output File %s Open Error!:%v\n%s\n"
 
 // E0009MSG Standard Error Output File Open Error Message
-const E0009MSG = "E0009:%s:Standard Error Output File %s Open Error!:%v\n"
+const E0009MSG = "E0009:Standard Error Output File %s Open Error!:%v\n%s\n"
 
 // E0010MSG Input Output Column Name Format Error Message
-const E0010MSG = "E0010:%s:Input/Output Column Name Format Error:%s.\n"
+const E0010MSG = "E0010:Input/Output Column Name Format Error:%s.\n%s\n"
 
 // E0011MSG No Input Filld Name Error Message
-const E0011MSG = "E0011:%s:No Input Field Name:%s.\n"
+const E0011MSG = "E0011:No Input Field Name:%s.\n%s\n"
 
 // E0012MSG Scan Error Message
-const E0012MSG = "E0012:%s:Scan Error:%v.\n"
+const E0012MSG = "E0012:Scan Error:%v.\n%s\n"
 
 // E0100MSG DateTime Format Error Message
-const E0100MSG = "E0100:%s:DateTime %s is not Format yyyy[mm[dd[hhmiss]]]:%v.\n"
+const E0100MSG = "E0100:DateTime %s is not Format yyyy[mm[dd[hhmiss]]]:%v.\n%s\n"
 
 // E0110MSG Time Format Error Message
-const E0110MSG = "E0110:%s:Time %s is not Format hhmiss:%v.\n"
+const E0110MSG = "E0110:Time %s is not Format hhmiss:%v.\n%s\n"
 
 // E9999MSG Unexpected Error Message
-const E9999MSG = "E9999:%s:Unexpected Error:%v.\n"
+const E9999MSG = "E9999:Unexpected Error:%v.\n%s\n"
 
 // ErrOutOfIndex スライス(配列)の範囲外へのアクセスを実施した場合
 type ErrOutOfIndex struct {
-	PkgMethodName string
-	ArrayName     string
-	Index         int
+	ArrayName  string
+	Index      int
+	StackTrace string
 }
 
 func (e ErrOutOfIndex) Error() string {
-	return fmt.Sprintf(E0001MSG, e.PkgMethodName, e.ArrayName, e.Index)
+	return fmt.Sprintf(E0001MSG, e.ArrayName, e.Index, e.StackTrace)
 }
 
 // ErrNotInitialized 初期化されていない場合のエラー
 type ErrNotInitialized struct {
-	PkgMethodName     string
+	// 	PkgMethodName     string
 	NoInitializedItem string
+	StackTrace        string
 }
 
 func (e ErrNotInitialized) Error() string {
-	return fmt.Sprintf(E0002MSG, e.PkgMethodName, e.NoInitializedItem)
+	return fmt.Sprintf(E0002MSG, e.NoInitializedItem, e.StackTrace)
 }
 
 // ErrFlushBuffer バッファのflushがエラーとなった場合
 type ErrFlushBuffer struct {
-	PkgMethodName string
-	ErrorItem     string
+	ErrorItem  string
+	StackTrace string
 }
 
 func (e ErrFlushBuffer) Error() string {
-	return fmt.Sprintf(E0003MSG, e.PkgMethodName, e.ErrorItem)
+	return fmt.Sprintf(E0003MSG, e.ErrorItem, e.StackTrace)
 }
 
 // ErrInFieldCntNotEqualOutFieldCnt 入力フィールド数と出力フィールド数が一致すべきときに一致しない場合
 type ErrInFieldCntNotEqualOutFieldCnt struct {
-	PkgMethodName string
 	InFieldCount  int
 	OutFieldCount int
+	StackTrace    string
 }
 
 func (e ErrInFieldCntNotEqualOutFieldCnt) Error() string {
-	return fmt.Sprintf(E0004MSG, e.PkgMethodName, e.InFieldCount, e.OutFieldCount)
+	return fmt.Sprintf(E0004MSG, e.InFieldCount, e.OutFieldCount, e.StackTrace)
 }
 
 // ErrArgument 入力フィールド数と出力フィールド数が一致すべきときに一致しない場合
 type ErrArgument struct {
-	PkgMethodName string
-	Argv          []string
+	Argv       []string
+	StackTrace string
 }
 
 func (e ErrArgument) Error() string {
-	return fmt.Sprintf(E0005MSG, e.PkgMethodName, e.Argv)
+	return fmt.Sprintf(E0005MSG, e.Argv, e.StackTrace)
 }
 
 // ErrNoHeaderRecord ヘッダレコードがない場合
 type ErrNoHeaderRecord struct {
-	PkgMethodName string
-	FieldName     string
+	FieldName  string
+	StackTrace string
 }
 
 func (e ErrNoHeaderRecord) Error() string {
-	return fmt.Sprintf(E0006MSG, e.PkgMethodName, e.FieldName)
+	return fmt.Sprintf(E0006MSG, e.FieldName, e.StackTrace)
 }
 
 // ErrStdInputFileOpen 標準入力ファイルオープンエラー
 type ErrStdInputFileOpen struct {
-	PkgMethodName string
-	FileName      string
-	Err           error
+	FileName   string
+	Err        error
+	StackTrace string
 }
 
 func (e ErrStdInputFileOpen) Error() string {
-	return fmt.Sprintf(E0007MSG, e.PkgMethodName, e.FileName, e.Err)
+	return fmt.Sprintf(E0007MSG, e.FileName, e.Err, e.StackTrace)
 }
 
 // ErrStdOutputFileOpen 標準出力ファイルオープンエラー
 type ErrStdOutputFileOpen struct {
-	PkgMethodName string
-	FileName      string
-	Err           error
+	FileName   string
+	Err        error
+	StackTrace string
 }
 
 func (e ErrStdOutputFileOpen) Error() string {
-	return fmt.Sprintf(E0008MSG, e.PkgMethodName, e.FileName, e.Err)
+	return fmt.Sprintf(E0008MSG, e.FileName, e.Err, e.StackTrace)
 }
 
 // ErrStdErrOutputFileOpen 標準エラー出力ファイルオープンエラー
 type ErrStdErrOutputFileOpen struct {
-	PkgMethodName string
-	FileName      string
-	Err           error
+	FileName   string
+	Err        error
+	StackTrace string
 }
 
 func (e ErrStdErrOutputFileOpen) Error() string {
-	return fmt.Sprintf(E0009MSG, e.PkgMethodName, e.FileName, e.Err)
+	return fmt.Sprintf(E0009MSG, e.FileName, e.Err, e.StackTrace)
 }
 
 // ErrInputOutputColumNameFormat 標準エラー出力ファイルオープンエラー
 type ErrInputOutputColumNameFormat struct {
-	PkgMethodName string
-	ColumnName    string
+	ColumnName string
+	StackTrace string
 }
 
 func (e ErrInputOutputColumNameFormat) Error() string {
-	return fmt.Sprintf(E0010MSG, e.PkgMethodName, e.ColumnName)
+	return fmt.Sprintf(E0010MSG, e.ColumnName, e.StackTrace)
 }
 
 // ErrNoInputFieldName 存在しないフィールド名が指定されたときのエラー
 type ErrNoInputFieldName struct {
-	PkgMethodName string
-	FieldName     string
+	FieldName  string
+	StackTrace string
 }
 
 func (e ErrNoInputFieldName) Error() string {
-	return fmt.Sprintf(E0011MSG, e.PkgMethodName, e.FieldName)
+	return fmt.Sprintf(E0011MSG, e.FieldName, e.StackTrace)
 }
 
 // ErrScan スキャンエラー
 type ErrScan struct {
-	PkgMethodName string
-	Err           error
+	Err        error
+	StackTrace string
 }
 
 func (e ErrScan) Error() string {
-	return fmt.Sprintf(E0012MSG, e.PkgMethodName, e.Err)
+	return fmt.Sprintf(E0012MSG, e.Err, e.StackTrace)
 }
 
 // ErrDateTimeFormat 日時フォーマットエラー
 type ErrDateTimeFormat struct {
-	PkgMethodName string
-	DateTimeStr   string
-	Err           error
+	DateTimeStr string
+	Err         error
+	StackTrace  string
 }
 
 func (e ErrDateTimeFormat) Error() string {
-	return fmt.Sprintf(E0100MSG, e.PkgMethodName, e.DateTimeStr, e.Err)
+	return fmt.Sprintf(E0100MSG, e.DateTimeStr, e.Err, e.StackTrace)
 }
 
 // ErrTimeFormat 時刻フォーマットエラー
 type ErrTimeFormat struct {
-	PkgMethodName string
-	TimeStr       string
-	Err           error
+	TimeStr    string
+	Err        error
+	StackTrace string
 }
 
 func (e ErrTimeFormat) Error() string {
-	return fmt.Sprintf(E0110MSG, e.PkgMethodName, e.TimeStr, e.Err)
+	return fmt.Sprintf(E0110MSG, e.TimeStr, e.Err, e.StackTrace)
 }
 
 // ErrUnexpected 予期しないエラー
 type ErrUnexpected struct {
-	PkgMethodName string
-	Err           error
+	Err        error
+	StackTrace string
 }
 
 func (e ErrUnexpected) Error() string {
-	return fmt.Sprintf(E9999MSG, e.PkgMethodName, e.Err)
+	return fmt.Sprintf(E9999MSG, e.Err, e.StackTrace)
 }

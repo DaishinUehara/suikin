@@ -44,14 +44,15 @@ func PrintCallStack() string {
 	callstack := SkCallStack(2)
 	var ret = bytes.NewBuffer(make([]byte, 0, 100))
 	for _, callinfo := range callstack {
-		ret.WriteString("[filename=")
+		ret.WriteString("[filename:")
 		ret.WriteString(callinfo.FileName)
-		ret.WriteString("][line=")
+		ret.WriteString("][line:")
 		ret.WriteString(fmt.Sprintf("%d", callinfo.FileLine))
 		ret.WriteString("]")
 		ret.WriteString(callinfo.PkgName)
 		ret.WriteString(".")
 		ret.WriteString(callinfo.FuncName)
+		ret.WriteString("\n")
 	}
 	return ret.String()
 }

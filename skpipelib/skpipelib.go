@@ -74,7 +74,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		skexecinfoar = *sp.pSkExecInfoArr
 		execlen = len(skexecinfoar)
 	} else {
-		return errAr, skerrlib.ErrNotInitialized{PkgMethodName: "skpipelib.MultiExec", NoInitializedItem: "sp.pSkExecInfoArr"}
+		return errAr, skerrlib.ErrNotInitialized{NoInitializedItem: "sp.pSkExecInfoArr", StackTrace: skerrlib.PrintCallStack()}
 	}
 
 	pipeReaderArr := make([]*io.PipeReader, 0, execlen)
