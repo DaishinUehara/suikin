@@ -17,7 +17,8 @@ type SkExecIf interface {
 
 // SkMultiIf Pipeへのアクセスインターフェース
 type SkMultiIf interface {
-	AddExec(SkExecIf, []string, []string)
+	AddExec(SkExecIf)
+	AddMultiExec(SkMultiIf)
 	MultiExec(io.Reader, io.Writer, io.Writer) ([]error, error)
 }
 
@@ -44,11 +45,25 @@ func (sp *SkMulti) AddExec(skexec SkExecIf) {
 	} else {
 		skexecinfoarr = *sp.pSkExecInfoArr
 	}
-	//pskeinfo = new(SkExecInfo)
-	//pskeinfo.skexec = skexec
-	//pskeinfo.infield = infield
-	//pskeinfo.outfield = outfield
 	skexecinfoarr = append(skexecinfoarr, skexec)
+	sp.pSkExecInfoArr = &skexecinfoarr
+
+}
+
+// AddMultiExec pipeで実行する処理を複数追加する
+func (sp *SkMulti) AddMultiExec(skemultixec SkMultiIf) {
+	var (
+		skexecinfoarr []SkExecIf
+	)
+	if sp.pSkExecInfoArr == nil {
+		skexecinfoarr = make([]SkExecIf, 0, 5)
+		sp.pSkExecInfoArr = &skexecinfoarr
+	} else {
+		skexecinfoarr = *sp.pSkExecInfoArr
+	}
+	for _, skexec := range skexecinfoarr {
+		skexecinfoarr = append(skexecinfoarr, skexec)
+	}
 	sp.pSkExecInfoArr = &skexecinfoarr
 
 }

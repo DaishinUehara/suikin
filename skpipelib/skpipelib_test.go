@@ -229,6 +229,9 @@ func TestMultiExec(t *testing.T) {
 		}
 
 	}
+
+	// AddMultiExecで追加の後、AddMultiExec
+
 }
 
 func TestPipeExec(t *testing.T) {
