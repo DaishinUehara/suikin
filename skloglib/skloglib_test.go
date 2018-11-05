@@ -10,6 +10,10 @@ var loglib skloglib.SkLogger
 
 func TestGetLogger(t *testing.T) {
 	logger, err := loglib.GetLogger()
-	defer logger.Sync()
-
+	if err != nil {
+		t.Errorf("[NG]:err=%v\n", err)
+	} else {
+		defer logger.Sync()
+		t.Logf("[OK]:\n")
+	}
 }
