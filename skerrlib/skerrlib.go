@@ -38,6 +38,18 @@ const E0011MSG = "E0011:No Input Field Name:%s.\n%s\n"
 // E0012MSG Scan Error Message
 const E0012MSG = "E0012:Scan Error:%v.\n%s\n"
 
+// E0013MSG LoggerGenerate Error Message
+const E0013MSG = "E0013:Logger Generate Error:%v.\n%s\n"
+
+// E0014MSG Read File Error Message
+const E0014MSG = "E0014:Read File Error:%v.\n%s\n"
+
+// E0015MSG Read File Error Message
+const E0015MSG = "E0015:Get Absolute Path Error:%v.\n%s\n"
+
+// E0016MSG YAML Mapping Error Message
+const E0016MSG = "E0016:YAML Mapping Error:%v.\n%s\n"
+
 // E0100MSG DateTime Format Error Message
 const E0100MSG = "E0100:DateTime %s is not Format yyyy[mm[dd[hhmiss]]]:%v.\n%s\n"
 
@@ -171,6 +183,46 @@ type ErrScan struct {
 
 func (e ErrScan) Error() string {
 	return fmt.Sprintf(E0012MSG, e.Err, e.StackTrace)
+}
+
+// ErrLoggerGenerate ロガー生成エラー
+type ErrLoggerGenerate struct {
+	Err        error
+	StackTrace string
+}
+
+func (e ErrLoggerGenerate) Error() string {
+	return fmt.Sprintf(E0013MSG, e.Err, e.StackTrace)
+}
+
+// ErrReadFile ファイルリードエラー
+type ErrReadFile struct {
+	Err        error
+	StackTrace string
+}
+
+func (e ErrReadFile) Error() string {
+	return fmt.Sprintf(E0014MSG, e.Err, e.StackTrace)
+}
+
+// ErrGetAbsolutePath 絶対パス取得エラー
+type ErrGetAbsolutePath struct {
+	Err        error
+	StackTrace string
+}
+
+func (e ErrGetAbsolutePath) Error() string {
+	return fmt.Sprintf(E0015MSG, e.Err, e.StackTrace)
+}
+
+// ErrYamlMapping YAMLマッピングエラー
+type ErrYamlMapping struct {
+	Err        error
+	StackTrace string
+}
+
+func (e ErrYamlMapping) Error() string {
+	return fmt.Sprintf(E0016MSG, e.Err, e.StackTrace)
 }
 
 // ErrDateTimeFormat 日時フォーマットエラー

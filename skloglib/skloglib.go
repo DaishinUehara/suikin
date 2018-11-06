@@ -3,7 +3,10 @@ package skloglib
 import (
 	"io/ioutil"
 
+	"path/filepath"
+
 	"github.com/DaishinUehara/suikin/skconflib"
+	"github.com/DaishinUehara/suikin/skerrlib"
 	"go.uber.org/zap"
 
 	//	"github.com/natefinch/lumberjack"
@@ -11,7 +14,8 @@ import (
 )
 
 const (
-	defaultConfFile = "conf/log.yml"
+	defaultConfFile = "../conf/log.yml"
+	// defaultConfFile = "C:\\work\\02_go\\go\\src\\github.com\\DaishinUehara\\suikin\\conf\\log.yml"
 )
 
 // SkLogger is Suikin Logger.
@@ -26,24 +30,32 @@ var conf skconflib.SkConf
 func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	var conffile string
 	var err error
+	var fpath string
+	err = nil
 	skl.logger, err = zap.NewProduction()
 	if err != nil {
-		return skl.logger, err
+		return nil, skerrlib.ErrLoggerGenerate{Err: err, StackTrace: skerrlib.PrintCallStack()}
 	}
 	conffile = conf.GetLogConfig("CONFIG_YAML")
 	if conffile == "" {
 		conffile = defaultConfFile
 	}
-	configYaml, err := ioutil.ReadFile(conffile)
+	fpath, err = filepath.Abs(conffile)
 	if err != nil {
-		return skl.logger, err
+		return nil, skerrlib.ErrGetAbsolutePath{Err: err, StackTrace: skerrlib.PrintCallStack()}
 	}
-	if err = yaml.Unmarshal(configYaml, &skl.logconfig); err != nil {
-		return skl.logger, err
-	}
-	skl.logger, err = skl.logconfig.Build()
+
+	configYaml, err := ioutil.ReadFile(fpath)
 	if err != nil {
-		return skl.logger, err
+		return nil, skerrlib.ErrReadFile{Err: err, StackTrace: skerrlib.PrintCallStack()}
+	}
+	logconfig := &skl.logconfig
+	if err = yaml.Unmarshal(configYaml, logconfig); err != nil {
+		return nil, skerrlib.ErrYamlMapping{Err: err, StackTrace: skerrlib.PrintCallStack()}
+	}
+	skl.logger, err = logconfig.Build()
+	if err != nil {
+		return nil, err
 	}
 	return skl.logger, err
 
