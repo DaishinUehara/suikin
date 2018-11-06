@@ -1,6 +1,9 @@
 package skloglib_test
 
 import (
+	"bytes"
+	"io"
+	"os"
 	"testing"
 	"time"
 
@@ -17,7 +20,15 @@ func TestGetLogger(t *testing.T) {
 	} else {
 		defer logger.Sync()
 		arr := []string{"abc", "def", "hij"}
+		stdout := os.Stdout // backup os.Stdout
+		r, w, _ := os.Pipe()
+		os.Stdout = w // connect
 		logger.Info("Hello zap", zap.String("key", "value"), zap.Time("now", time.Now()), zap.Strings("stack", arr))
-		t.Logf("[OK]:\n")
+		os.Stdout = stdout
+		w.Close()
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		str := buf.String()
+		t.Logf("[OK]:%s\n", str)
 	}
 }
