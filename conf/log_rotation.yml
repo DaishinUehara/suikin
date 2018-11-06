@@ -1,0 +1,8 @@
+---
+filename: "suikin.log"
+maxsize: 10
+maxage: 31
+maxbackups: 3
+localtime: true
+compress: false
+
