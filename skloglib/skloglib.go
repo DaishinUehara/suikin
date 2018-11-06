@@ -33,35 +33,34 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	var err error
 	var rotationconf string
 	err = nil
-	/*
-		skl.logger, err = zap.NewProduction()
-		if err != nil {
-			// zap loggerの取得に失敗した場合
-			return nil, skerrlib.ErrLoggerGenerate{Err: err, StackTrace: skerrlib.PrintCallStack()}
-		}
-	*/
 
 	formatconf = conf.GetLogConfig("FORMAT_YAML")
 	if formatconf == "" {
 		formatconf = defaultLogFormatConf
 	}
 	configYaml, err := ReadByteFile(formatconf)
+	if err != nil {
+		// 設定ファイルの読み込みに失敗した場合
+		return nil, err
+	}
+
 	if err = yaml.Unmarshal(configYaml, &skl.logconfig); err != nil {
 		// 設定ファイルを構造体にセットできなかった場合
 		return nil, skerrlib.ErrYamlMapping{Err: err, StackTrace: skerrlib.PrintCallStack()}
 	}
+
 	enc := zapcore.NewJSONEncoder(skl.logconfig.EncoderConfig)
 
 	rotationconf = conf.GetLogConfig("ROTATION_YAML")
 	if rotationconf == "" {
 		rotationconf = defalutLogRotationConf
 	}
+
 	rotateYaml, err := ReadByteFile(rotationconf)
 	if err != nil {
 		// 設定ファイルの読み込みに失敗した場合
-		return nil, skerrlib.ErrReadFile{Err: err, StackTrace: skerrlib.PrintCallStack()}
+		return nil, err
 	}
-
 	if err = yaml.Unmarshal(rotateYaml, &skl.lmblogger); err != nil {
 		// 設定ファイルを構造体にセットできなかった場合
 		return nil, skerrlib.ErrYamlMapping{Err: err, StackTrace: skerrlib.PrintCallStack()}
