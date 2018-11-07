@@ -6,10 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"encoding/json"
+
 	"github.com/DaishinUehara/suikin/skcmnlib"
 	"github.com/DaishinUehara/suikin/skloglib"
 	"go.uber.org/zap"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var loglib skloglib.SkLogger
@@ -48,7 +49,7 @@ func TestGetLogger(t *testing.T) {
 		logger.Info("Hello zap", zap.String("key", "value"), zap.Time("now", now), zap.Strings("stack", arr))
 		// Parse Log File
 		logdata, _ := skcmnlib.ReadByteFile(logfilepath)
-		if err = yaml.Unmarshal(logdata, &logd); err != nil {
+		if err = json.Unmarshal(logdata, &logd); err != nil {
 			// 設定ファイルを構造体にセットできなかった場合
 			t.Errorf("[NG]:err=%v\n", err)
 		} else {
