@@ -1,9 +1,7 @@
 package skloglib
 
 import (
-	"io/ioutil"
-	"path/filepath"
-
+	"github.com/DaishinUehara/suikin/skcmnlib"
 	"github.com/DaishinUehara/suikin/skconflib"
 	"github.com/DaishinUehara/suikin/skerrlib"
 	"go.uber.org/zap"
@@ -38,7 +36,7 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	if formatconf == "" {
 		formatconf = defaultLogFormatConf
 	}
-	configYaml, err := ReadByteFile(formatconf)
+	configYaml, err := skcmnlib.ReadByteFile(formatconf)
 	if err != nil {
 		// 設定ファイルの読み込みに失敗した場合
 		return nil, err
@@ -56,7 +54,7 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 		rotationconf = defalutLogRotationConf
 	}
 
-	rotateYaml, err := ReadByteFile(rotationconf)
+	rotateYaml, err := skcmnlib.ReadByteFile(rotationconf)
 	if err != nil {
 		// 設定ファイルの読み込みに失敗した場合
 		return nil, err
@@ -72,19 +70,4 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 
 	return skl.logger, err
 
-}
-
-// ReadByteFile is ReadFile absolute path or relative path.
-func ReadByteFile(path string) ([]byte, error) {
-	rconf, err := filepath.Abs(path)
-	if err != nil {
-		// 設定ファイルの絶対パス取得に失敗した場合
-		return nil, skerrlib.ErrGetAbsolutePath{Err: err, StackTrace: skerrlib.PrintCallStack()}
-	}
-	data, err := ioutil.ReadFile(rconf)
-	if err != nil {
-		// 設定ファイルの読み込みに失敗した場合
-		return nil, skerrlib.ErrReadFile{Err: err, StackTrace: skerrlib.PrintCallStack()}
-	}
-	return data, err
 }

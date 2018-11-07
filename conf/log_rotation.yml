@@ -1,6 +1,6 @@
 ---
-filename: "suikin.log"
-maxsize: 10
+filename: "../logs/suikin.log"
+maxsize: 1
 maxage: 31
 maxbackups: 3
 localtime: true

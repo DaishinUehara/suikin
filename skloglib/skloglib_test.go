@@ -1,31 +1,61 @@
 package skloglib_test
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/DaishinUehara/suikin/skcmnlib"
 	"github.com/DaishinUehara/suikin/skloglib"
 	"go.uber.org/zap"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var loglib skloglib.SkLogger
 
+const (
+	logfilepath = "../logs/suikin.log"
+)
+
+type LogData struct {
+	Level string   `json:"Level"`
+	Time  string   `json:"Time"`
+	Msg   string   `json:"Msg"`
+	Key   string   `json:"key"`
+	Now   string   `json:"now"`
+	Stack []string `json:"stack"`
+}
+
 func TestGetLogger(t *testing.T) {
-	//	stdout := os.Stdout // backup os.Stdout
-	//	r, w, _ := os.Pipe()
-	//	os.Stdout = w // connect
+	var logd LogData
+
+	abslog, err := filepath.Abs(logfilepath)
+	if _, err := os.Stat(abslog); err == nil {
+		if err := os.Remove(abslog); err != nil {
+			t.Errorf("[NG]:err=%v,file not found %v\n", err, abslog)
+		}
+	}
+
 	logger, err := loglib.GetLogger()
 	if err != nil {
 		t.Errorf("[NG]:err=%v\n", err)
 	} else {
 		defer logger.Sync()
 		arr := []string{"abc", "def", "hij"}
-		logger.Info("Hello zap", zap.String("key", "value"), zap.Time("now", time.Now()), zap.Strings("stack", arr))
-		//		os.Stdout = stdout
-		//		w.Close()
-		//		var buf bytes.Buffer
-		//		io.Copy(&buf, r)
-		//		str := buf.String()
-		//		t.Logf("[OK]:%s\n", str)
+		var now time.Time
+		now = time.Now()
+		logger.Info("Hello zap", zap.String("key", "value"), zap.Time("now", now), zap.Strings("stack", arr))
+		// Parse Log File
+		logdata, _ := skcmnlib.ReadByteFile(logfilepath)
+		if err = yaml.Unmarshal(logdata, &logd); err != nil {
+			// 設定ファイルを構造体にセットできなかった場合
+			t.Errorf("[NG]:err=%v\n", err)
+		} else {
+			if logd.Key == "value" {
+				t.Logf("[OK]:key=%v\n", logd.Key)
+			}
+		}
+
 	}
 }

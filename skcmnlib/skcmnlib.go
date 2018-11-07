@@ -2,7 +2,9 @@ package skcmnlib
 
 import (
 	"bufio"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -154,6 +156,21 @@ func SortByIndex(inputarray []string, index []int) (sortarray []string, err erro
 		sortarray = append(sortarray, inputarray[fi])
 	}
 	return sortarray, err
+}
+
+// ReadByteFile is ReadFile absolute path or relative path.
+func ReadByteFile(path string) ([]byte, error) {
+	rconf, err := filepath.Abs(path)
+	if err != nil {
+		// 設定ファイルの絶対パス取得に失敗した場合
+		return nil, skerrlib.ErrGetAbsolutePath{Err: err, StackTrace: skerrlib.PrintCallStack()}
+	}
+	data, err := ioutil.ReadFile(rconf)
+	if err != nil {
+		// 設定ファイルの読み込みに失敗した場合
+		return nil, skerrlib.ErrReadFile{Err: err, StackTrace: skerrlib.PrintCallStack()}
+	}
+	return data, err
 }
 
 ///////////////////////////////
