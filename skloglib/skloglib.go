@@ -16,6 +16,9 @@ const (
 	defalutLogRotationConf = "../conf/log_rotation.yml"
 )
 
+// SkLog is Logger
+var SkLog SkLogger
+
 // SkLogger is Suikin Logger.
 type SkLogger struct {
 	logger    *zap.Logger

@@ -46,7 +46,8 @@ func TestGetLogger(t *testing.T) {
 			}
 		}
 	*/
-	logger, err = loglib.GetLogger()
+	logger, err = skloglib.SkLog.GetLogger()
+	//	logger, err = loglib.GetLogger()
 	if err != nil {
 		t.Errorf("[NG]:err=%v\n", err)
 	} else {
@@ -68,7 +69,8 @@ func TestGetLogger(t *testing.T) {
 			}
 		}
 
-		logger, err = loglib.GetLogger() // 再度のlogger取得
+		logger, err = skloglib.SkLog.GetLogger() // 再度のlogger取得
+		// logger, err = loglib.GetLogger() // 再度のlogger取得
 		if err != nil {
 			t.Errorf("[NG]:err=%v\n", err)
 		}
