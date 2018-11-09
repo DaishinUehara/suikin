@@ -31,6 +31,9 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	var err error
 	var rotationconf string
 	err = nil
+	if skl.logger != nil {
+		return skl.logger, err
+	}
 
 	formatconf = conf.GetLogConfig("FORMAT_YAML")
 	if formatconf == "" {
