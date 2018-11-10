@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/DaishinUehara/suikin/skcallstacklib"
 	"github.com/DaishinUehara/suikin/skcmnlib"
 	"github.com/DaishinUehara/suikin/skerrlib"
 	"github.com/DaishinUehara/suikin/skselflib"
@@ -13,7 +14,7 @@ import (
 func printUsage() {
 	_usage := "self <infile|-> <outfile|-> <errfile|-> [incolumname1[,newcolumnname1]] [incolumname2[,newcolumnname2]] ...\n"
 	_version := "Thu Dec  8 10:46:51 JST 2018\n"
-	_code := "Suikin 2.4 Go (windows/go-lang 1.9/UTF-8)\n"
+	_code := "Suikin 0.0 Go (windows/go-lang 1.11.2/UTF-8)\n"
 	_description := []string{
 		"\n",
 	}
@@ -54,7 +55,7 @@ func main() {
 func selfExec(argv []string) error {
 	arglen := len(argv)
 	if arglen < 4 {
-		return &skerrlib.ErrArgument{Argv: argv, StackTrace: skerrlib.PrintCallStack()}
+		return &skerrlib.ErrArgument{Argv: argv, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 
 	var selectColumnName []string
@@ -80,7 +81,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		infile, err = os.Open(argv[1])
 		if err != nil {
-			return &skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Input File %s open error: %v\n", argv[1], err)
 		}
 		defer infile.Close() // 関数return時に閉じる
@@ -94,7 +95,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		outfile, err = os.Open(argv[2])
 		if err != nil {
-			return &skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Output File %s open error: %v\n", argv[2], err)
 		}
 		defer outfile.Close() // 関数return時に閉じる
@@ -108,7 +109,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		errfile, err = os.Open(os.Args[3])
 		if err != nil {
-			return &skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Standard Error File %s open error: %v\n", argv[3], err)
 		}
 		defer errfile.Close() // 関数return時に閉じる
@@ -130,7 +131,7 @@ func selfExec(argv []string) error {
 			// return err
 			return err
 		default:
-			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 		}
 	}
 
@@ -154,7 +155,7 @@ func selfExec(argv []string) error {
 			return err
 		default:
 			// unexpected error.
-			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 		}
 	}
 	return err
