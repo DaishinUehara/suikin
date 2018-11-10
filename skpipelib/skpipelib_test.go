@@ -71,7 +71,7 @@ func TestMultiExec(t *testing.T) {
 	errAr2, err2 := pe2.MultiExec(stdin2, stdout2, stderr2)
 	if err2 != nil {
 		switch err2.(type) {
-		case skerrlib.ErrNotInitialized:
+		case *skerrlib.ErrNotInitialized:
 			t.Logf("[OK]:skselflib.MultiExec(%v,%v,%v):infield2=%v,outfield2=%v,errAr2=%v,len(errAr2)=%d,err2=%v\n", stdin2, stdout2, stderr2, infield2, outfield2, errAr2, len(errAr2), err2)
 		default:
 			t.Errorf("[NG]:skselflib.MultiExec(%v,%v,%v):infield2=%v,outfield2=%v,errAr2=%v,len(errAr2)=%d,err2=%v\n", stdin2, stdout2, stderr2, infield2, outfield2, errAr2, len(errAr2), err2)

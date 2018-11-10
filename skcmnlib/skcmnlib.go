@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DaishinUehara/suikin/skcallstacklib"
 	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
@@ -32,7 +33,7 @@ func CammaDivide(selectColumnName []string) ([]string, []string, error) {
 			outcolumnname = append(outcolumnname, columnarray[1])
 		} else {
 			// err = fmt.Errorf("Input/Output Column Name Format Error: %s", column)
-			return incolumnname, outcolumnname, skerrlib.ErrInputOutputColumNameFormat{ColumnName: column, StackTrace: skerrlib.PrintCallStack()}
+			return incolumnname, outcolumnname, &skerrlib.ErrInputOutputColumNameFormat{ColumnName: column, StackTrace: skcallstacklib.PrintCallStack()}
 		}
 	}
 	return incolumnname, outcolumnname, err
@@ -65,7 +66,7 @@ func GetFieldIndex(headerFields []string, fieldName string) (fieldIndex int, err
 	if fieldIndex == -1 {
 		//err = errors.New(fmt.Sprintf("No FieldName: %s", fieldName))
 		// err = fmt.Errorf("No FieldName: %s", fieldName)
-		err = skerrlib.ErrNoInputFieldName{FieldName: fieldName, StackTrace: skerrlib.PrintCallStack()}
+		err = &skerrlib.ErrNoInputFieldName{FieldName: fieldName, StackTrace: skcallstacklib.PrintCallStack()}
 		return fieldIndex, err
 	}
 	return fieldIndex, nil
@@ -79,10 +80,10 @@ func GetFieldIndexArray(headerFields []string, selectFieldNames []string) ([]int
 		fieldIndex = append(fieldIndex, l)
 		if err != nil {
 			switch err.(type) {
-			case skerrlib.ErrNoInputFieldName:
+			case *skerrlib.ErrNoInputFieldName:
 				return fieldIndex, err
 			default:
-				return nil, skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
+				return nil, &skerrlib.ErrUnexpected{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 			}
 		}
 	}
@@ -149,7 +150,7 @@ func SortByIndex(inputarray []string, index []int) (sortarray []string, err erro
 	inarrsize := len(inputarray)
 	for _, fi := range index {
 		if inarrsize <= fi {
-			err = skerrlib.ErrOutOfIndex{ArrayName: "inputarray", Index: fi, StackTrace: skerrlib.PrintCallStack()}
+			err = &skerrlib.ErrOutOfIndex{ArrayName: "inputarray", Index: fi, StackTrace: skcallstacklib.PrintCallStack()}
 			sortarray = make([]string, 0)
 			return sortarray, err
 		}
@@ -163,12 +164,12 @@ func ReadByteFile(path string) ([]byte, error) {
 	rconf, err := filepath.Abs(path)
 	if err != nil {
 		// 設定ファイルの絶対パス取得に失敗した場合
-		return nil, skerrlib.ErrGetAbsolutePath{Err: err, StackTrace: skerrlib.PrintCallStack()}
+		return nil, &skerrlib.ErrGetAbsolutePath{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 	data, err := ioutil.ReadFile(rconf)
 	if err != nil {
 		// 設定ファイルの読み込みに失敗した場合
-		return nil, skerrlib.ErrReadFile{Err: err, StackTrace: skerrlib.PrintCallStack()}
+		return nil, &skerrlib.ErrReadFile{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 	return data, err
 }
@@ -182,7 +183,7 @@ func DateToUnixSec(timestr string) (int64, error) {
 	layout := layoutBase[0:l]
 	t1, e1 := time.Parse(layout, timestr)
 	if e1 != nil {
-		return 0, skerrlib.ErrDateTimeFormat{DateTimeStr: timestr, Err: e1, StackTrace: skerrlib.PrintCallStack()}
+		return 0, &skerrlib.ErrDateTimeFormat{DateTimeStr: timestr, Err: e1, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 	return t1.Unix(), nil
 }
@@ -196,7 +197,7 @@ func TimeToUnixSec(timestr string) (int64, error) {
 	tmptime := topstr + timestr
 	t1, e1 := time.Parse(layoutBase, tmptime)
 	if e1 != nil {
-		return 0, skerrlib.ErrTimeFormat{TimeStr: timestr, Err: e1, StackTrace: skerrlib.PrintCallStack()}
+		return 0, &skerrlib.ErrTimeFormat{TimeStr: timestr, Err: e1, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 	return t1.Unix(), nil
 }

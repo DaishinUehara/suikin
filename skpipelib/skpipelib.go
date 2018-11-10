@@ -5,6 +5,7 @@ import (
 	"io"
 	"sync"
 
+	"github.com/DaishinUehara/suikin/skcallstacklib"
 	"github.com/DaishinUehara/suikin/skerrlib"
 )
 
@@ -89,7 +90,7 @@ func (sp *SkMulti) MultiExec(iosr io.Reader, ioso io.Writer, iose io.Writer) ([]
 		skexecinfoar = *sp.pSkExecInfoArr
 		execlen = len(skexecinfoar)
 	} else {
-		return errAr, skerrlib.ErrNotInitialized{NoInitializedItem: "sp.pSkExecInfoArr", StackTrace: skerrlib.PrintCallStack()}
+		return errAr, &skerrlib.ErrNotInitialized{NoInitializedItem: "sp.pSkExecInfoArr", StackTrace: skcallstacklib.PrintCallStack()}
 	}
 
 	pipeReaderArr := make([]*io.PipeReader, 0, execlen)

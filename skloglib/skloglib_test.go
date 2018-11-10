@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var loglib skloglib.SkLogger
+//var loglib skloglib.SkLogger
 
 const (
 	logfilepath = "../logs/suikin.log"

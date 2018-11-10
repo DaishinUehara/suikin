@@ -41,10 +41,10 @@ func main() {
 	err := selfExec(os.Args)
 	if err != nil {
 		switch err.(type) {
-		case skerrlib.ErrArgument:
+		case *skerrlib.ErrArgument:
 			// TODO エラー処理追加
 			printUsage()
-		case skerrlib.ErrUnexpected:
+		case *skerrlib.ErrUnexpected:
 		}
 		os.Exit(1)
 	}
@@ -54,7 +54,7 @@ func main() {
 func selfExec(argv []string) error {
 	arglen := len(argv)
 	if arglen < 4 {
-		return skerrlib.ErrArgument{Argv: argv, StackTrace: skerrlib.PrintCallStack()}
+		return &skerrlib.ErrArgument{Argv: argv, StackTrace: skerrlib.PrintCallStack()}
 	}
 
 	var selectColumnName []string
@@ -80,7 +80,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		infile, err = os.Open(argv[1])
 		if err != nil {
-			return skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdInputFileOpen{FileName: argv[1], Err: err, StackTrace: skerrlib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Input File %s open error: %v\n", argv[1], err)
 		}
 		defer infile.Close() // 関数return時に閉じる
@@ -94,7 +94,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		outfile, err = os.Open(argv[2])
 		if err != nil {
-			return skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdOutputFileOpen{FileName: argv[2], Err: err, StackTrace: skerrlib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Output File %s open error: %v\n", argv[2], err)
 		}
 		defer outfile.Close() // 関数return時に閉じる
@@ -108,7 +108,7 @@ func selfExec(argv []string) error {
 		// ファイルを開く場合
 		errfile, err = os.Open(os.Args[3])
 		if err != nil {
-			return skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrStdErrOutputFileOpen{FileName: argv[3], Err: err, StackTrace: skerrlib.PrintCallStack()}
 			// fmt.Fprintf(os.Stderr, "Standard Error File %s open error: %v\n", argv[3], err)
 		}
 		defer errfile.Close() // 関数return時に閉じる
@@ -125,36 +125,36 @@ func selfExec(argv []string) error {
 	skself.InColumnName, skself.OutColumName, err = skcmnlib.CammaDivide(selectColumnName)
 	if err != nil {
 		switch err.(type) {
-		case skerrlib.ErrInputOutputColumNameFormat:
+		case *skerrlib.ErrInputOutputColumNameFormat:
 			// fmt.Fprintf(stderr, "Select Column Arguments Error selectColumnName=%v:err=%v\n", selectColumnName, err)
 			// return err
 			return err
 		default:
-			return skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
 		}
 	}
 
 	err = skself.Exec(stdin, stdout, stderr)
 	if err != nil {
 		switch err.(type) {
-		case skerrlib.ErrNotInitialized:
+		case *skerrlib.ErrNotInitialized:
 			// stdin, stdout, stderr is not initialized.
 			return err
-		case skerrlib.ErrInFieldCntNotEqualOutFieldCnt:
+		case *skerrlib.ErrInFieldCntNotEqualOutFieldCnt:
 			// incolumnname and outcolumnname is not one to one.
 			return err
-		case skerrlib.ErrNoHeaderRecord:
+		case *skerrlib.ErrNoHeaderRecord:
 			// no header record.
 			return err
-		case skerrlib.ErrScan:
+		case *skerrlib.ErrScan:
 			// scan error.
 			return err
-		case skerrlib.ErrFlushBuffer:
+		case *skerrlib.ErrFlushBuffer:
 			// buffer flush error.
 			return err
 		default:
 			// unexpected error.
-			return skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
+			return &skerrlib.ErrUnexpected{Err: err, StackTrace: skerrlib.PrintCallStack()}
 		}
 	}
 	return err

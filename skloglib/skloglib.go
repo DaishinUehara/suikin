@@ -1,9 +1,11 @@
 package skloglib
 
 import (
+	"github.com/DaishinUehara/suikin/skcallstacklib"
 	"github.com/DaishinUehara/suikin/skcmnlib"
 	"github.com/DaishinUehara/suikin/skconflib"
 	"github.com/DaishinUehara/suikin/skerrlib"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -16,10 +18,10 @@ const (
 	defalutLogRotationConf = "../conf/log_rotation.yml"
 )
 
-// SkLog is Logger
+// SkLog is Logger for Suikin.
 var SkLog SkLogger
 
-// SkLogger is Suikin Logger.
+// SkLogger is Suikin Logger Struct.
 type SkLogger struct {
 	logger    *zap.Logger
 	logconfig zap.Config
@@ -50,7 +52,7 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 
 	if err = yaml.Unmarshal(configYaml, &skl.logconfig); err != nil {
 		// 設定ファイルを構造体にセットできなかった場合
-		return nil, skerrlib.ErrYamlMapping{Err: err, StackTrace: skerrlib.PrintCallStack()}
+		return nil, &skerrlib.ErrYamlMapping{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 
 	enc := zapcore.NewJSONEncoder(skl.logconfig.EncoderConfig)
@@ -67,7 +69,7 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	}
 	if err = yaml.Unmarshal(rotateYaml, &skl.lmblogger); err != nil {
 		// 設定ファイルを構造体にセットできなかった場合
-		return nil, skerrlib.ErrYamlMapping{Err: err, StackTrace: skerrlib.PrintCallStack()}
+		return nil, &skerrlib.ErrYamlMapping{Err: err, StackTrace: skcallstacklib.PrintCallStack()}
 	}
 
 	sink := zapcore.AddSync(skl.lmblogger)
