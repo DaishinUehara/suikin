@@ -19,14 +19,14 @@ func RmFile(rmfilepath string) error {
 	return err
 }
 
-// Last Return not blank last line.
-// If the last line is blank , return the one before line.
+// Last is return not blank last line of file.
+// If the last line is blank, return the one before line.
+// If file is blank, return blank.
 func Last(readfilepath string) (string, error) {
 	var last string
 	var tmp string
-	var err error
-	var abspath string
-	abspath, err = filepath.Abs(readfilepath)
+
+	abspath, err := filepath.Abs(readfilepath)
 	if _, err = os.Stat(abspath); err != nil {
 		return "", err
 	}
@@ -46,4 +46,34 @@ func Last(readfilepath string) (string, error) {
 		last = tmp
 	}
 	return last, err
+}
+
+// Touch is create blnak file.
+func Touch(touchfilepath string) error {
+
+	touchfilepath, err1 := filepath.Abs(touchfilepath)
+	if err1 != nil {
+		return err1
+	}
+	fp, err2 := os.OpenFile(touchfilepath, os.O_CREATE, 0666)
+	if err2 != nil {
+		return err2
+	}
+	//	_, err3 := fp.WriteString("")
+	defer fp.Close()
+	return err2
+}
+
+/*
+Exists is file exists check.
+If file exists, return true.
+If file not exists, return false.
+*/
+func Exists(filename string) bool {
+	fpath, err1 := filepath.Abs(filename)
+	if err1 != nil {
+		return false
+	}
+	_, err2 := os.Stat(fpath)
+	return err2 == nil
 }
