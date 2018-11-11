@@ -1,19 +1,16 @@
 package skloglib_test
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
 	"encoding/json"
 
 	"github.com/DaishinUehara/suikin/skcmnlib"
+	"github.com/DaishinUehara/suikin/skfilelib"
 	"github.com/DaishinUehara/suikin/skloglib"
 	"go.uber.org/zap"
 )
-
-//var loglib skloglib.SkLogger
 
 const (
 	logfilepath = "../logs/suikin.log"
@@ -34,18 +31,11 @@ func TestGetLogger(t *testing.T) {
 	var err error
 	// var abslog string
 
-	err = rmLog(logfilepath)
+	err = skfilelib.RmFile(logfilepath)
 	if err != nil {
 		t.Errorf("[NG]:rmLog:err=%v\n", err)
 	}
-	/*
-		abslog, err = filepath.Abs(logfilepath)
-		if _, err = os.Stat(abslog); err == nil {
-			if err = os.Remove(abslog); err != nil {
-				t.Errorf("[NG]:err=%v,file not found %v\n", err, abslog)
-			}
-		}
-	*/
+
 	logger, err = skloglib.SkLog.GetLogger()
 	//	logger, err = loglib.GetLogger()
 	if err != nil {
@@ -86,14 +76,4 @@ func TestGetLogger(t *testing.T) {
 		}
 
 	}
-}
-
-func rmLog(logfilepath string) error {
-	var err error
-	var abslog string
-	abslog, err = filepath.Abs(logfilepath)
-	if _, err = os.Stat(abslog); err == nil {
-		err = os.Remove(abslog)
-	}
-	return err
 }

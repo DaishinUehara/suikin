@@ -15,4 +15,5 @@ pkg/*
 
 vendor/*
 logs/*
+tmp/*
 
