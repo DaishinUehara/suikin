@@ -16,4 +16,7 @@ pkg/*
 vendor/*
 logs/*
 tmp/*
+# for gitkeep
+!.gitkeep
+
 
