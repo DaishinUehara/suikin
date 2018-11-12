@@ -7,43 +7,43 @@ import (
 // MsgMap is Error Message Map.
 var MsgMap = map[string]string{
 	// E0001 Out of Index Error Mesage.
-	"E0001": "E0001:%s[%d] is Out of Index. %v\n",
+	"E0001": "E0001:%s[%d] is Out of Index! %v",
 	// E0002 Not Initialized Error Message.
-	"E0002": "E0002:%s is not initialized! %v\n",
+	"E0002": "E0002:%s is not initialized! %v",
 	// E0003 Buffer flush Error Message.
-	"E0003": "E0003:Buffer %s flush Error! %v\n",
+	"E0003": "E0003:Buffer %s flush Error! %v",
 	// E0004 Input Field Number is not Output Field Number Error Message.
-	"E0004": "E0004:Input fields count %d is not equal output fields count %d! %v\n",
+	"E0004": "E0004:Input fields count %d is not equal output fields count %d! %v",
 	// E0005 Argument Error Message.
-	"E0005": "E0005:Argument Error %v! %v\n",
+	"E0005": "E0005:Argument Error %v! %v",
 	// E0006 Input Data Header Record Error Message.
-	"E0006": "E0006:No Header Record Field %s Error! %v\n",
+	"E0006": "E0006:No Header Record Field %s Error! %v",
 	// E0007 Standard Input File Open Error Message.
-	"E0007": "E0007:Standard Input File %s Open Error!:%v %v\n",
+	"E0007": "E0007:Standard Input File %s Open Error!:%v %v",
 	// E0008 Standard Output File Open Error Message.
-	"E0008": "E0008:Standard Output File %s Open Error!:%v %v\n",
+	"E0008": "E0008:Standard Output File %s Open Error!:%v %v",
 	// E0009 Standard Error Output File Open Error Message.
-	"E0009": "E0009:Standard Error Output File %s Open Error!:%v %v\n",
+	"E0009": "E0009:Standard Error Output File %s Open Error!:%v %v",
 	// E0010 Input Output Column Name Format Error Message.
-	"E0010": "E0010:Input/Output Column Name Format Error:%s. %v\n",
+	"E0010": "E0010:Input/Output Column Name Format Error!:%s %v",
 	// E0011 No Input Filld Name Error Message.
-	"E0011": "E0011:No Input Field Name:%s. %v\n",
+	"E0011": "E0011:No Input Field Name:%s %v",
 	// E0012 Scan Error Message.
-	"E0012": "E0012:Scan Error:%v. %v\n",
+	"E0012": "E0012:Scan Error!:%v %v",
 	// E0013 LoggerGenerate Error Message.
-	"E0013": "E0013:Logger Generate Error:%v. %v\n",
+	"E0013": "E0013:Logger Generate Error!:%v %v",
 	// E0014 Read File Error Message.
-	"E0014": "E0014:Read File Error:%v. %v\n",
+	"E0014": "E0014:Read File Error!:%v %v",
 	// E0015 Read File Error Message.
-	"E0015": "E0015:Get Absolute Path Error:%v. %v\n",
+	"E0015": "E0015:Get Absolute Path Error!:%v %v",
 	// E0016 YAML Mapping Error Message.
-	"E0016": "E0016:YAML Mapping Error:%v. %v\n",
+	"E0016": "E0016:YAML Mapping Error!:%v %v",
 	// E0100 DateTime Format Error Message.
-	"E0100": "E0100:DateTime %s is not Format yyyy[mm[dd[hhmiss]]]:%v. %v\n",
+	"E0100": "E0100:DateTime %s is not Format yyyy[mm[dd[hhmiss]]]:%v %v",
 	// E0110 Time Format Error Message.
-	"E0110": "E0110:Time %s is not Format hhmiss:%v. %v\n",
+	"E0110": "E0110:Time %s is not Format hhmiss:%v %v",
 	// E9999 Unexpected Error Message.
-	"E9999": "E9999:Unexpected Error:%v. %v\n",
+	"E9999": "E9999:Unexpected Error!:%v %v",
 }
 
 // ErrOutOfIndex is Out of Index Access.

@@ -79,3 +79,13 @@ func (skl *SkLogger) GetLogger() (*zap.Logger, error) {
 	return skl.logger, err
 
 }
+
+// ErrLogOutput Output Log "Index Error"
+func ErrLogOutput(e error) error {
+	logger, err := SkLog.GetLogger()
+	if err != nil {
+		return err
+	}
+	logger.Error(e.Error())
+	return err
+}

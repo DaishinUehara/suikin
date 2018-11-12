@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 
 	"github.com/DaishinUehara/suikin/skcmnlib"
+	"github.com/DaishinUehara/suikin/skerrlib"
 	"github.com/DaishinUehara/suikin/skfilelib"
 	"github.com/DaishinUehara/suikin/skloglib"
 	"go.uber.org/zap"
@@ -76,4 +77,32 @@ func TestGetLogger(t *testing.T) {
 		}
 
 	}
+}
+
+type ErrLogData struct {
+	Level string `json:"Level"`
+	Time  string `json:"Time"`
+	Msg   string `json:"Msg"`
+}
+
+func TestErrLogOutput(t *testing.T) {
+	var skerr = skerrlib.ErrOutOfIndex{ArrayName: "test", Index: 1, StackTrace: []string{"abc", "def"}}
+	skloglib.ErrLogOutput(&skerr)
+	last, err1 := skfilelib.Last(logfilepath)
+	if err1 != nil {
+		t.Errorf("[NG]:err1=%v\n", err1)
+	}
+	var logd ErrLogData
+
+	if err2 := json.Unmarshal([]byte(last), &logd); err2 != nil {
+		// 設定ファイルを構造体にセットできなかった場合
+		t.Errorf("[NG]:err2=%v\n", err2)
+	} else {
+		if logd.Level == "ERROR" {
+			t.Logf("[OK]:logd=%v\n", logd)
+		} else {
+			t.Errorf("[NG]:logd=%v\n", logd)
+		}
+	}
+
 }
