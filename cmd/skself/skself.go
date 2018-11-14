@@ -12,7 +12,7 @@ import (
 )
 
 func printUsage() {
-	_usage := "self <infile|-> <outfile|-> <errfile|-> [incolumname1[,newcolumnname1]] [incolumname2[,newcolumnname2]] ...\n"
+	_usage := "skself <infile|-> <outfile|-> <errfile|-> [incolumname1[,newcolumnname1]] [incolumname2[,newcolumnname2]] ...\n"
 	_version := "Thu Dec  8 10:46:51 JST 2018\n"
 	_code := "Suikin 0.0 Go (windows/go-lang 1.11.2/UTF-8)\n"
 	_description := []string{
